@@ -1,7 +1,13 @@
-import { Module } from '@nestjs/common';
+import {
+  Module,
+  NestModule,
+  OnModuleInit,
+  MiddlewareConsumer,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { MikroORM } from '@mikro-orm/core';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 import { UserModule } from './user/user.module';
@@ -20,4 +26,11 @@ import { HistoricModule } from './historic/historic.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule, OnModuleInit {
+  constructor(private _orm: MikroORM) {}
+  async onModuleInit() {
+    await this._orm.getMigrator().up();
+  }
+
+  configure(consumer: MiddlewareConsumer) {}
+}
