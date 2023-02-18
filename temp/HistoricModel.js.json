@@ -1,0 +1,118 @@
+{
+  "data": {
+    "propertyOrder": {},
+    "properties": {
+      "id": {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number",
+        "array": false
+      },
+      "change": {
+        "name": "change",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      "previousValue": {
+        "name": "previousValue",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      "createdAt": {
+        "name": "createdAt",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "Date",
+        "array": false
+      },
+      "item": {
+        "name": "item",
+        "reference": "m:1",
+        "cascade": ["persist"],
+        "type": "ItemModel",
+        "owner": true,
+        "array": false
+      }
+    },
+    "props": [
+      {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number",
+        "array": false
+      },
+      {
+        "name": "change",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      {
+        "name": "previousValue",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      {
+        "name": "createdAt",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "Date",
+        "array": false
+      },
+      {
+        "name": "item",
+        "reference": "m:1",
+        "cascade": ["persist"],
+        "type": "ItemModel",
+        "owner": true,
+        "array": false
+      }
+    ],
+    "primaryKeys": ["id"],
+    "filters": {},
+    "hooks": {},
+    "indexes": [],
+    "uniques": [],
+    "checks": [],
+    "concurrencyCheckKeys": {},
+    "className": "HistoricModel",
+    "path": "./dist/historic/historic-model.js",
+    "name": "HistoricModel",
+    "abstract": false,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "useCache": true,
+    "compositePK": false,
+    "relations": [
+      {
+        "name": "item",
+        "reference": "m:1",
+        "cascade": ["persist"],
+        "type": "ItemModel",
+        "owner": true,
+        "array": false
+      }
+    ],
+    "collection": "historic_model"
+  },
+  "origin": "./dist/historic/historic-model.js",
+  "hash": "25fd3ff50ed2b834789fb307e9bf15da",
+  "version": "5.6.9"
+}

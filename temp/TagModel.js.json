@@ -1,0 +1,100 @@
+{
+  "data": {
+    "propertyOrder": {},
+    "properties": {
+      "id": {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number",
+        "array": false
+      },
+      "name": {
+        "name": "name",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      "description": {
+        "name": "description",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      "items": {
+        "name": "items",
+        "reference": "m:n",
+        "cascade": ["persist"],
+        "type": "ItemModel",
+        "fixedOrder": false,
+        "array": false
+      }
+    },
+    "props": [
+      {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number",
+        "array": false
+      },
+      {
+        "name": "name",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      {
+        "name": "description",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      {
+        "name": "items",
+        "reference": "m:n",
+        "cascade": ["persist"],
+        "type": "ItemModel",
+        "fixedOrder": false,
+        "array": false
+      }
+    ],
+    "primaryKeys": ["id"],
+    "filters": {},
+    "hooks": {},
+    "indexes": [],
+    "uniques": [],
+    "checks": [],
+    "concurrencyCheckKeys": {},
+    "className": "TagModel",
+    "path": "./dist/tag/tag-model.js",
+    "name": "TagModel",
+    "abstract": false,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "useCache": true,
+    "compositePK": false,
+    "relations": [
+      {
+        "name": "items",
+        "reference": "m:n",
+        "cascade": ["persist"],
+        "type": "ItemModel",
+        "fixedOrder": false,
+        "array": false
+      }
+    ],
+    "collection": "tag_model"
+  },
+  "origin": "./dist/tag/tag-model.js",
+  "hash": "2367f100956a09ba51273ab06aa69775",
+  "version": "5.6.9"
+}

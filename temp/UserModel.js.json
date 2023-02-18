@@ -1,0 +1,131 @@
+{
+  "data": {
+    "propertyOrder": {},
+    "properties": {
+      "id": {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number",
+        "array": false
+      },
+      "email": {
+        "name": "email",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      "username": {
+        "name": "username",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      "password": {
+        "name": "password",
+        "reference": "scalar",
+        "lazy": true,
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      "type": {
+        "name": "type",
+        "reference": "scalar",
+        "enum": true,
+        "items": ["admin", "basic", "master"],
+        "type": "string",
+        "array": false
+      },
+      "items": {
+        "name": "items",
+        "reference": "1:m",
+        "cascade": ["persist"],
+        "type": "ItemModel",
+        "array": false
+      }
+    },
+    "props": [
+      {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number",
+        "array": false
+      },
+      {
+        "name": "email",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      {
+        "name": "username",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      {
+        "name": "password",
+        "reference": "scalar",
+        "lazy": true,
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      {
+        "name": "type",
+        "reference": "scalar",
+        "enum": true,
+        "items": ["admin", "basic", "master"],
+        "type": "string",
+        "array": false
+      },
+      {
+        "name": "items",
+        "reference": "1:m",
+        "cascade": ["persist"],
+        "type": "ItemModel",
+        "array": false
+      }
+    ],
+    "primaryKeys": ["id"],
+    "filters": {},
+    "hooks": {},
+    "indexes": [],
+    "uniques": [],
+    "checks": [],
+    "concurrencyCheckKeys": {},
+    "className": "UserModel",
+    "path": "./dist/user/user-model.js",
+    "name": "UserModel",
+    "abstract": false,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "useCache": true,
+    "compositePK": false,
+    "relations": [
+      {
+        "name": "items",
+        "reference": "1:m",
+        "cascade": ["persist"],
+        "type": "ItemModel",
+        "array": false
+      }
+    ],
+    "collection": "user_model"
+  },
+  "origin": "./dist/user/user-model.js",
+  "hash": "4c3f28427506a3ef4d575e61fae56c48",
+  "version": "5.6.9"
+}

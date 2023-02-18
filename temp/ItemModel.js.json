@@ -1,0 +1,215 @@
+{
+  "data": {
+    "propertyOrder": {},
+    "properties": {
+      "id": {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number",
+        "array": false
+      },
+      "name": {
+        "name": "name",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      "stock": {
+        "name": "stock",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "number",
+        "array": false
+      },
+      "price": {
+        "name": "price",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "number",
+        "array": false
+      },
+      "imageUrl": {
+        "name": "imageUrl",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      "createdAt": {
+        "name": "createdAt",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "Date",
+        "array": false
+      },
+      "updatedAt": {
+        "name": "updatedAt",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "Date",
+        "array": false
+      },
+      "user": {
+        "name": "user",
+        "reference": "m:1",
+        "cascade": ["persist"],
+        "type": "UserModel",
+        "owner": true,
+        "array": false
+      },
+      "changes": {
+        "name": "changes",
+        "reference": "1:m",
+        "cascade": ["persist"],
+        "type": "HistoricModel",
+        "array": false
+      },
+      "tags": {
+        "name": "tags",
+        "reference": "m:n",
+        "cascade": ["persist"],
+        "owner": true,
+        "inversedBy": "items",
+        "type": "TagModel",
+        "fixedOrder": false,
+        "array": false
+      }
+    },
+    "props": [
+      {
+        "name": "id",
+        "reference": "scalar",
+        "primary": true,
+        "type": "number",
+        "array": false
+      },
+      {
+        "name": "name",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      {
+        "name": "stock",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "number",
+        "array": false
+      },
+      {
+        "name": "price",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "number",
+        "array": false
+      },
+      {
+        "name": "imageUrl",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      {
+        "name": "createdAt",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "Date",
+        "array": false
+      },
+      {
+        "name": "updatedAt",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "Date",
+        "array": false
+      },
+      {
+        "name": "user",
+        "reference": "m:1",
+        "cascade": ["persist"],
+        "type": "UserModel",
+        "owner": true,
+        "array": false
+      },
+      {
+        "name": "changes",
+        "reference": "1:m",
+        "cascade": ["persist"],
+        "type": "HistoricModel",
+        "array": false
+      },
+      {
+        "name": "tags",
+        "reference": "m:n",
+        "cascade": ["persist"],
+        "owner": true,
+        "inversedBy": "items",
+        "type": "TagModel",
+        "fixedOrder": false,
+        "array": false
+      }
+    ],
+    "primaryKeys": ["id"],
+    "filters": {},
+    "hooks": {},
+    "indexes": [],
+    "uniques": [],
+    "checks": [],
+    "concurrencyCheckKeys": {},
+    "className": "ItemModel",
+    "path": "./dist/item/item-model.js",
+    "name": "ItemModel",
+    "abstract": false,
+    "constructorParams": [],
+    "toJsonParams": [],
+    "useCache": true,
+    "compositePK": false,
+    "relations": [
+      {
+        "name": "user",
+        "reference": "m:1",
+        "cascade": ["persist"],
+        "type": "UserModel",
+        "owner": true,
+        "array": false
+      },
+      {
+        "name": "changes",
+        "reference": "1:m",
+        "cascade": ["persist"],
+        "type": "HistoricModel",
+        "array": false
+      },
+      {
+        "name": "tags",
+        "reference": "m:n",
+        "cascade": ["persist"],
+        "owner": true,
+        "inversedBy": "items",
+        "type": "TagModel",
+        "fixedOrder": false,
+        "array": false
+      }
+    ],
+    "collection": "item_model"
+  },
+  "origin": "./dist/item/item-model.js",
+  "hash": "953e858f3a7f069ec731521aea73def3",
+  "version": "5.6.9"
+}
