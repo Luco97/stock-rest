@@ -1,10 +1,11 @@
-import { Entity } from '@mikro-orm/core/decorators';
 import {
   ManyToMany,
   Collection,
   ManyToOne,
   OneToMany,
   Property,
+  Entity,
+  PrimaryKey,
 } from '@mikro-orm/core';
 
 import { TagModel } from '../tag/tag-model';
@@ -13,6 +14,7 @@ import { HistoricModel } from '../historic/historic-model';
 
 @Entity()
 export class ItemModel {
+  @PrimaryKey()
   id: number;
 
   @Property()
