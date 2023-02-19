@@ -101,7 +101,7 @@
     ],
     "primaryKeys": ["id"],
     "filters": {},
-    "hooks": {},
+    "hooks": { "beforeCreate": ["hashPass"] },
     "indexes": [],
     "uniques": [],
     "checks": [],
@@ -126,6 +126,6 @@
     "collection": "user_model"
   },
   "origin": "./dist/user/user-model.js",
-  "hash": "4c3f28427506a3ef4d575e61fae56c48",
+  "hash": "cc66237679029616771dcb17a40b36f6",
   "version": "5.6.9"
 }
