@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
@@ -7,13 +7,23 @@ import { UserTypes } from './user.enum';
 
 @Injectable()
 export class UserRepoService {
-  private readonly _logger = new Logger(UserRepoService.name);
   constructor(
     @InjectRepository(UserModel)
     private readonly _userRepo: EntityRepository<UserModel>,
   ) {}
 
-  async create(params: { email: string; username: string; password: string }) {
+  countRoles(params: { userID: number; roles: string[] }) {
+    const { roles, userID } = params;
+    return this._userRepo
+      .createQueryBuilder('user')
+      .select(['user.id', 'user.type'])
+      .where({
+        $and: [{ 'user.id': userID }, { 'user.type': { $in: roles } }],
+      })
+      .getCount();
+  }
+
+  create(params: { email: string; username: string; password: string }) {
     const { email, password, username } = params;
     return this._userRepo.persistAndFlush(
       this._userRepo.create({
@@ -23,5 +33,23 @@ export class UserRepoService {
         type: UserTypes.BASIC,
       }),
     );
+  }
+
+  findUnique(params: { email: string; username: string }) {
+    const { email, username } = params;
+
+    return this._userRepo
+      .createQueryBuilder('user')
+      .select([
+        'user.id', // error if 'id' is not select
+        'user.email',
+        'user.password',
+        'user.username',
+        'user.type',
+      ])
+      .where({
+        $or: [{ 'user.email': email }, { 'user.username': username }],
+      })
+      .getSingleResult();
   }
 }
