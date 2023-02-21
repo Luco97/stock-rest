@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityData } from '@mikro-orm/core';
+import { EntityData, QueryResult } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
@@ -40,7 +40,7 @@ export class ItemRepoService {
     order: 'ASC' | 'DESC';
     rol: string;
     userID: number;
-  }) {
+  }): Promise<[ItemModel[], number]> {
     const { order, orderBy, skip, take, rol, userID } = params;
 
     return this._itemRepo
@@ -80,7 +80,7 @@ export class ItemRepoService {
     price: number;
     imageUrl: string;
     rol: string;
-  }) {
+  }): Promise<QueryResult<ItemModel>> {
     const { itemID, userID, imageUrl, name, price, stock, rol } = params;
     const updateItem: EntityData<ItemModel> = {};
 
