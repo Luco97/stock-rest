@@ -12,7 +12,7 @@ export class UserRepoService {
     private readonly _userRepo: EntityRepository<UserModel>,
   ) {}
 
-  countRoles(params: { userID: number; roles: string[] }) {
+  countRoles(params: { userID: number; roles: string[] }): Promise<number> {
     const { roles, userID } = params;
     return this._userRepo
       .createQueryBuilder('user')
@@ -35,7 +35,7 @@ export class UserRepoService {
     );
   }
 
-  findUnique(params: { email: string; username: string }) {
+  findUser(params: { email: string; username: string }): Promise<UserModel> {
     const { email, username } = params;
 
     return this._userRepo
