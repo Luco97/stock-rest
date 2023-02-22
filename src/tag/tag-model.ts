@@ -4,6 +4,7 @@ import {
   PrimaryKey,
   ManyToMany,
   Collection,
+  QueryOrder,
 } from '@mikro-orm/core';
 import { EntityManager } from '@mikro-orm/postgresql';
 import { ItemModel } from '../item/item-model';
@@ -28,25 +29,27 @@ export class TagModel {
     return em
       .createQueryBuilder(TagModel, 'tag')
       .select([
-        'tag.id as id',
-        'tag.name as name',
-        'tag.description as description',
+        'tag.id',
+        'tag.name',
+        'tag.description',
         'COUNT(items.id) as item_count',
       ])
       .leftJoin('tag.items', 'items')
-      .groupBy('tag.id');
+      .groupBy('tag.id')
+      .orderBy({ name: QueryOrder.ASC });
   },
+  virtual: true,
 })
 export class TagItemsCount {
   @Property()
-  id: number;
+  id!: number;
 
   @Property()
-  name: string;
+  name!: string;
 
   @Property()
-  itemCount: number;
+  description!: string;
 
   @Property()
-  description: string;
+  itemCount!: number;
 }
