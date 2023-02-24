@@ -5,6 +5,7 @@ import { UserModel } from './user-model';
 
 @Module({
   imports: [MikroOrmModule.forFeature({ entities: [UserModel] })],
+  exports: [UserRepoService],
   providers: [UserRepoService],
 })
 export class UserModule {}
