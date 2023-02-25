@@ -1,3 +1,24 @@
+<hr>
+
+## Descripcion
+
+CRUD basico, utilizando Fastify, JWT para autenticar usuario y tipo, donde existen solo 2 roles:
+
+- Administrador, que puede ver productos de cualquier usuario basico y los productos propios del admin (Productos de Administradores solo pueden ser visto por sus creadores)
+- Basicos, usuario que puede borrar, actualizar y revisar sus productos propios.
+
+### Herramientas
+
+Algunas de las herramientas utilizadas son:
+
+- Mikro-ORM para manipulacion de la base de datos
+- JWT como clave para autenticar usuarios
+- BCrypt para hash de contraseñas de usuarios
+- Fastify
+- class-validators para Body tipado
+
+<hr>
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
