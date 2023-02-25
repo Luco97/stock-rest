@@ -5,7 +5,7 @@ import { FastifyRequest } from 'fastify';
 import { from, map, Observable, of } from 'rxjs';
 
 import { AuthService } from '@shared/auth';
-import { UserRepoService } from '../user/user-repo.service';
+import { UserRepoService } from '@models/user';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
