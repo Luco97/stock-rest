@@ -77,7 +77,7 @@
     "checks": [],
     "concurrencyCheckKeys": {},
     "className": "TagItemsCount",
-    "path": "./dist/tag/tag-model.js",
+    "path": "./dist/models/tag/tag-model.js",
     "virtual": true,
     "name": "TagItemsCount",
     "abstract": false,
@@ -87,7 +87,7 @@
     "relations": [],
     "collection": "tag_items_count"
   },
-  "origin": "./dist/tag/tag-model.js",
+  "origin": "./dist/models/tag/tag-model.js",
   "hash": "90437ba2d76ea087727d92bd97ee64ad",
   "version": "5.6.9"
 }

@@ -107,7 +107,7 @@
     "checks": [],
     "concurrencyCheckKeys": {},
     "className": "UserModel",
-    "path": "./dist/user/user-model.js",
+    "path": "./dist/models/user/user-model.js",
     "name": "UserModel",
     "abstract": false,
     "constructorParams": [],
@@ -125,7 +125,7 @@
     ],
     "collection": "user_model"
   },
-  "origin": "./dist/user/user-model.js",
+  "origin": "./dist/models/user/user-model.js",
   "hash": "cc66237679029616771dcb17a40b36f6",
   "version": "5.6.9"
 }

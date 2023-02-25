@@ -173,7 +173,7 @@
     "checks": [],
     "concurrencyCheckKeys": {},
     "className": "ItemModel",
-    "path": "./dist/item/item-model.js",
+    "path": "./dist/models/item/item-model.js",
     "name": "ItemModel",
     "abstract": false,
     "constructorParams": [],
@@ -209,7 +209,7 @@
     ],
     "collection": "item_model"
   },
-  "origin": "./dist/item/item-model.js",
+  "origin": "./dist/models/item/item-model.js",
   "hash": "953e858f3a7f069ec731521aea73def3",
   "version": "5.6.9"
 }
