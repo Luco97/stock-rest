@@ -63,7 +63,11 @@ export class AuthService {
           name: payload.context.username,
         };
     } catch (error) {
-      return {};
+      return {
+        id: -1,
+        name: '',
+        type: '',
+      };
     }
   }
 }
