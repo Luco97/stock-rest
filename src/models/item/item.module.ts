@@ -5,6 +5,7 @@ import { ItemModel } from './item-model';
 
 @Module({
   imports: [MikroOrmModule.forFeature({ entities: [ItemModel] })],
+  exports: [ItemRepoService],
   providers: [ItemRepoService],
 })
 export class ItemModule {}
