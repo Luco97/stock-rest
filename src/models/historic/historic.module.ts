@@ -5,6 +5,7 @@ import { HistoricModel } from './historic-model';
 
 @Module({
   imports: [MikroOrmModule.forFeature({ entities: [HistoricModel] })],
+  exports: [HistoricRepoService],
   providers: [HistoricRepoService],
 })
 export class HistoricModule {}
