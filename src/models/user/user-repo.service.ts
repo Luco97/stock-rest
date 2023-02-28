@@ -48,7 +48,10 @@ export class UserRepoService {
         'user.type',
       ])
       .where({
-        $or: [{ 'user.email': email }, { 'user.username': username }],
+        $or: [
+          { 'user.email': email },
+          { 'lower("user"."username")': username },
+        ],
       })
       .getSingleResult();
   }
