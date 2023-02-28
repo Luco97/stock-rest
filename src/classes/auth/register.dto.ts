@@ -7,5 +7,6 @@ export class Register {
   @MinLength(5)
   username: string;
 
+  @MinLength(7)
   password: string;
 }
