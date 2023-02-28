@@ -5,6 +5,7 @@ import { TagModel, TagItemsCount } from './tag-model';
 
 @Module({
   imports: [MikroOrmModule.forFeature({ entities: [TagModel, TagItemsCount] })],
+  exports: [TagRepoService],
   providers: [TagRepoService],
 })
 export class TagModule {}
