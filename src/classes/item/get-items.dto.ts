@@ -1,4 +1,10 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsAlphanumeric,
+  IsArray,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class GetItems {
   @IsOptional()
@@ -16,4 +22,9 @@ export class GetItems {
   @IsOptional()
   @IsString()
   order: 'ASC' | 'DESC';
+
+  @IsOptional({ always: true })
+  @IsArray()
+  @IsAlphanumeric('es-ES', { each: true })
+  search: string[];
 }
