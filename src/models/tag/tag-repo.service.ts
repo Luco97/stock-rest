@@ -26,7 +26,7 @@ export class TagRepoService {
     const { name, skip, take } = params;
 
     return this._tagItemRepo.findAndCount(
-      { name: { $ilike: `${name}%` } },
+      { name: { $ilike: `%${name}%` } },
       {
         limit: take,
         offset: take * skip,
