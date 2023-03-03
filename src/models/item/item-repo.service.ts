@@ -40,14 +40,30 @@ export class ItemRepoService {
     order: 'ASC' | 'DESC';
     rol: string;
     userID: number;
+    search?: string[];
   }): Promise<[ItemModel[], number]> {
-    const { order, orderBy, skip, take, rol, userID } = params;
+    const { order, orderBy, skip, take, rol, userID, search } = params;
+
+    const itemName: { [key: string]: { $ilike: string } }[] = search.map<{
+      [key: string]: { $ilike: string };
+    }>((element) => ({ ['lower("item"."name")']: { $ilike: `%${element}%` } }));
+
+    const tagName: { [key: string]: { $ilike: string } }[] = search.map<{
+      [key: string]: { $ilike: string };
+    }>((element) => ({ ['lower("tag"."name")']: { $ilike: `%${element}%` } }));
 
     return this._itemRepo
       .createQueryBuilder('item')
       .leftJoinAndSelect('item.user', 'user')
       .leftJoinAndSelect('item.tags', 'tags')
-      .where({ $or: [{ 'user.type': rol }, { 'user.id': userID }] })
+      .where({
+        $or: [
+          { 'user.type': rol },
+          { 'user.id': userID },
+          ...itemName,
+          ...tagName,
+        ],
+      })
       .limit(take, take * skip)
       .orderBy({ [orderBy]: order })
       .getResultAndCount();
