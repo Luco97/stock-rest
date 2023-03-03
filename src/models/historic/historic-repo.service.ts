@@ -25,6 +25,7 @@ export class HistoricRepoService {
     return this._historyRepo
       .createQueryBuilder('change')
       .leftJoin('change.item', 'item')
+      .leftJoin('item.user', 'user')
       .where({
         $and: [
           { 'item.id': itemID },
