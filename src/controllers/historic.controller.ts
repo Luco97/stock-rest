@@ -25,7 +25,7 @@ export class HistoricController {
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   changes(
-    @Headers() headers,
+    @Headers('user_id') userID: string,
     @Param('itemID', ParseIntPipe) itemID: number,
     @Query('take') take: string,
     @Query('skip') skip: string,
@@ -33,11 +33,9 @@ export class HistoricController {
     @Res()
     res: FastifyReply,
   ) {
-    const userID: number = +headers['user_id'];
-
     this._historicRepo
       .findItemChanges({
-        userID,
+        userID: +userID,
         itemID,
         rol: 'admin',
         orderBy: ['ASC', 'DESC'].includes(orderBy)
