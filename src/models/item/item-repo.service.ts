@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { EntityData, QueryResult } from '@mikro-orm/core';
+import { EntityData, QueryResult, wrap } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
 import { ItemModel } from './item-model';
-import { UserModel } from '../user/user-model';
 
 @Injectable()
 export class ItemRepoService {
@@ -18,19 +17,22 @@ export class ItemRepoService {
     stock: number;
     price: number;
     imageUrl: string;
-    user: UserModel;
+    userID: number;
   }) {
-    const { imageUrl, name, price, stock, user } = params;
+    const { imageUrl, name, price, stock, userID } = params;
+    const newItem = this._itemRepo.create({
+      imageUrl: imageUrl || 'default.png',
+      name,
+      price,
+      stock,
+      user: { id: userID },
+    });
 
-    return this._itemRepo.persistAndFlush(
-      this._itemRepo.create({
-        imageUrl,
-        name,
-        price,
-        stock,
-        user,
-      }),
-    );
+    return this._itemRepo.createQueryBuilder().insert(newItem).execute('run');
+  }
+
+  init() {
+    return this._itemRepo.flush();
   }
 
   findAll(params: {
@@ -57,11 +59,15 @@ export class ItemRepoService {
       .leftJoinAndSelect('item.user', 'user')
       .leftJoinAndSelect('item.tags', 'tags')
       .where({
-        $or: [
-          { 'user.type': rol },
-          { 'user.id': userID },
+        $and: [
+          {
+            $or: [
+              { 'user.id': userID },
+              { "lower('admin')": rol },
+              // ...tagName,
+            ],
+          },
           ...itemName,
-          ...tagName,
         ],
       })
       .limit(take, take * skip)
@@ -82,7 +88,7 @@ export class ItemRepoService {
       .where({
         $and: [
           { 'item.id': itemID },
-          { $or: [{ 'user.type': rol }, { 'user.id': userID }] },
+          { $or: [{ "lower('admin')": rol }, { 'user.id': userID }] },
         ],
       })
       .getSingleResult();
