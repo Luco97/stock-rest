@@ -12,11 +12,7 @@ export class TagRepoService {
     private readonly _tagRepo: EntityRepository<TagModel>,
     @InjectRepository(TagItemsCount)
     private readonly _tagItemRepo: EntityRepository<TagItemsCount>,
-  ) {
-    // this.findOne(1).then((tag) => {
-    //   console.log('--->  ', tag);
-    // });
-  }
+  ) {}
 
   findAll(params: {
     take: number;
@@ -35,9 +31,16 @@ export class TagRepoService {
     );
   }
 
-  findOne(id: number): Promise<TagItemsCount> {
-    return this._tagItemRepo.findOne({ id });
+  findAllByID(tagID: number[]) {
+    return this._tagRepo
+      .createQueryBuilder('tag')
+      .where({ id: { $in: tagID } })
+      .getResult();
   }
+
+  // findOne(id: number): Promise<TagModel> {
+  //   return this._tagRepo.findOne({ id });
+  // }
 
   // Admin only
   create(params: { name: string; description: string }) {
