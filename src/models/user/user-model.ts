@@ -16,7 +16,7 @@ export class UserModel {
   @PrimaryKey()
   id: number;
 
-  @Property()
+  @Property({ lazy: true })
   email!: string;
 
   @Property()
@@ -25,7 +25,7 @@ export class UserModel {
   @Property({ lazy: true })
   password!: string;
 
-  @Enum(() => UserTypes)
+  @Enum({ items: () => UserTypes, lazy: true })
   type!: string;
 
   @OneToMany(() => ItemModel, (item) => item.user)

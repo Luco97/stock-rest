@@ -12,6 +12,7 @@
       "email": {
         "name": "email",
         "reference": "scalar",
+        "lazy": true,
         "getter": false,
         "setter": false,
         "type": "string",
@@ -39,6 +40,7 @@
         "reference": "scalar",
         "enum": true,
         "items": ["admin", "basic", "master"],
+        "lazy": true,
         "type": "string",
         "array": false
       },
@@ -61,6 +63,7 @@
       {
         "name": "email",
         "reference": "scalar",
+        "lazy": true,
         "getter": false,
         "setter": false,
         "type": "string",
@@ -88,6 +91,7 @@
         "reference": "scalar",
         "enum": true,
         "items": ["admin", "basic", "master"],
+        "lazy": true,
         "type": "string",
         "array": false
       },
@@ -126,6 +130,6 @@
     "collection": "user_model"
   },
   "origin": "./dist/models/user/user-model.js",
-  "hash": "cc66237679029616771dcb17a40b36f6",
+  "hash": "e24a5df886575f138aa18e4b246c169f",
   "version": "5.6.9"
 }
