@@ -1,10 +1,10 @@
 import {
-  ManyToMany,
-  Collection,
-  ManyToOne,
-  OneToMany,
-  Property,
   Entity,
+  Property,
+  OneToMany,
+  ManyToOne,
+  Collection,
+  ManyToMany,
   PrimaryKey,
 } from '@mikro-orm/core';
 
@@ -41,6 +41,9 @@ export class ItemModel {
   @OneToMany(() => HistoricModel, (historic) => historic.item)
   changes: Collection<HistoricModel> = new Collection<HistoricModel>(this);
 
-  @ManyToMany(() => TagModel, 'items', { owner: true })
+  @ManyToMany(() => TagModel, 'items', {
+    owner: true,
+    cascade: [],
+  })
   tags: Collection<TagModel> = new Collection<TagModel>(this);
 }
