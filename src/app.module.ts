@@ -18,10 +18,9 @@ import { HistoricModule } from '@models/historic';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 // Controladores
-import { AuthController } from './controllers/auth.controller';
 import { TagController } from './controllers/tag.controller';
+import { AuthController } from './controllers/auth.controller';
 import { ItemController } from './controllers/item.controller';
-import { HistoricController } from './controllers/historic.controller';
 
 @Module({
   imports: [
@@ -32,13 +31,7 @@ import { HistoricController } from './controllers/historic.controller';
     HistoricModule,
     AuthModule,
   ],
-  controllers: [
-    AppController,
-    AuthController,
-    TagController,
-    ItemController,
-    HistoricController,
-  ],
+  controllers: [AppController, AuthController, TagController, ItemController],
   providers: [AppService],
 })
 export class AppModule implements NestModule, OnModuleInit {
