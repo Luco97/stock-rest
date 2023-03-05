@@ -29,7 +29,7 @@ export class HistoricRepoService {
       .where({
         $and: [
           { 'item.id': itemID },
-          { $or: [{ 'user.type': rol }, { 'user.id': userID }] },
+          { $or: [{ "lower('admin')": rol }, { 'user.id': userID }] },
         ],
       })
       .orderBy({ createdAt: orderBy })
