@@ -1,6 +1,6 @@
 import {
-  ArrayMinSize,
   IsArray,
+  IsInt,
   IsOptional,
   IsUrl,
   Min,
@@ -23,4 +23,11 @@ export class UpdateItem {
   @IsOptional()
   @MinLength(5)
   name: string;
+}
+
+export class UpdateTags {
+  @IsArray()
+  @IsInt({ each: true })
+  @Min(1, { each: true })
+  tagIDs: number[];
 }
