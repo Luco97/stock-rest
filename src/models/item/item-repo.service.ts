@@ -4,6 +4,7 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
 import { ItemModel } from './item-model';
+import { TagModel } from '../tag/tag-model';
 
 @Injectable()
 export class ItemRepoService {
@@ -122,5 +123,14 @@ export class ItemRepoService {
         ],
       })
       .execute('get');
+  }
+
+  updateTags(params: { item: ItemModel; tags: TagModel[] }) {
+    const { item, tags } = params;
+
+    item.tags.removeAll();
+    item.tags.add(tags);
+
+    return this._itemRepo.flush();
   }
 }
