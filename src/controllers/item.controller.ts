@@ -19,15 +19,17 @@ import { FastifyReply } from 'fastify';
 
 import { TagRepoService } from '@models/tag';
 import { ItemRepoService } from '@models/item';
-import { CreateItem, UpdateItem } from '@dto/item';
+import { HistoricRepoService } from '@models/historic';
+import { CreateItem, UpdateItem, UpdateTags } from '@dto/item';
 import { RoleGuard } from '../guards/role.guard';
 import { GetTokenInterceptor } from '../interceptors/get-token.interceptor';
 
 @Controller('item')
 export class ItemController {
   constructor(
-    private _itemRepo: ItemRepoService,
     private _tagRepo: TagRepoService,
+    private _itemRepo: ItemRepoService,
+    private _historicRepo: HistoricRepoService,
   ) {}
 
   @Get()
@@ -35,6 +37,8 @@ export class ItemController {
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   findAll(
+    @Headers('user_id') userID: string,
+    @Headers('user_type') userType: string,
     @Query('take') take: string,
     @Query('skip') skip: string,
     @Query('order') order: string,
@@ -43,15 +47,14 @@ export class ItemController {
       'search',
       new ParseArrayPipe({ items: String, optional: true, separator: ',' }),
     )
-    search: string,
+    search: string[],
     @Res() res: FastifyReply,
   ) {
     this._itemRepo
       .findAll({
-        rol: 'admin',
         take: +take || 10,
         skip: +skip || 0,
-        search: [],
+        search: search || [],
         order: ['ASC', 'DESC'].includes(orderBy)
           ? (orderBy as 'ASC' | 'DESC')
           : 'ASC',
@@ -60,10 +63,11 @@ export class ItemController {
         )
           ? `item.${orderBy}`
           : 'item.createdAt',
-        userID: 1,
+        rol: userType,
+        userID: +userID,
       })
-      .then(([items, cound]) =>
-        res.status(HttpStatus.OK).send({ items, cound }),
+      .then(([items, count]) =>
+        res.status(HttpStatus.OK).send({ items, count }),
       );
   }
 
@@ -73,11 +77,12 @@ export class ItemController {
   @UseInterceptors(GetTokenInterceptor)
   findOne(
     @Headers('user_id') userID: string,
+    @Headers('user_type') userType: string,
     @Param('itemID', ParseIntPipe) itemID: number,
     @Res() res: FastifyReply,
   ) {
     this._itemRepo
-      .findOne({ itemID, rol: 'admin', userID: +userID })
+      .findOne({ itemID, rol: userType, userID: +userID })
       .then((item) => {
         res.send({
           item,
@@ -112,21 +117,11 @@ export class ItemController {
       });
   }
 
-  @Post('update/:itemID')
+  @Post(':itemID/update')
   @SetMetadata('roles', ['basic', 'admin'])
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   update(
-    @Param('itemID', ParseIntPipe) itemID: number,
-    @Body() cuerpo: UpdateItem,
-    @Res() res: FastifyReply,
-  ) {}
-
-  @Post('update/:itemID/tags')
-  @SetMetadata('roles', ['basic', 'admin'])
-  @UseGuards(RoleGuard)
-  @UseInterceptors(GetTokenInterceptor)
-  updateTags(
     @Param('itemID', ParseIntPipe) itemID: number,
     @Body() cuerpo: UpdateItem,
     @Res() res: FastifyReply,
@@ -140,4 +135,69 @@ export class ItemController {
     @Param('itemID', ParseIntPipe) itemID: number,
     @Res() res: FastifyReply,
   ) {}
+
+  @Get(':itemID/changes')
+  @SetMetadata('roles', ['basic', 'admin'])
+  @UseGuards(RoleGuard)
+  @UseInterceptors(GetTokenInterceptor)
+  changes(
+    @Headers('user_id') userID: string,
+    @Headers('user_type') userType: string,
+    @Param('itemID', ParseIntPipe) itemID: number,
+    @Query('take') take: string,
+    @Query('skip') skip: string,
+    @Query('orderBy') orderBy: string,
+    @Res()
+    res: FastifyReply,
+  ) {
+    this._historicRepo
+      .findItemChanges({
+        itemID,
+        orderBy: ['ASC', 'DESC'].includes(orderBy)
+          ? (orderBy as 'ASC' | 'DESC')
+          : 'ASC',
+        take: +take || 5,
+        skip: +skip || 0,
+        userID: +userID,
+        rol: userType,
+      })
+      .then(([changes, count]) =>
+        res.status(HttpStatus.OK).send({
+          status: HttpStatus.OK,
+          message: `All changes from item with id = ${itemID}`,
+          changes,
+          count,
+        }),
+      );
+  }
+
+  @Post(':itemID/update/tags')
+  @SetMetadata('roles', ['basic', 'admin'])
+  @UseGuards(RoleGuard)
+  @UseInterceptors(GetTokenInterceptor)
+  updateTags(
+    @Headers('user_id') userID: string,
+    @Headers('user_type') userType: string,
+    @Param('itemID', ParseIntPipe) itemID: number,
+    @Body() cuerpo: UpdateTags,
+    @Res() res: FastifyReply,
+  ) {
+    const { tagIDs } = cuerpo;
+
+    Promise.all([
+      this._itemRepo.findOne({ itemID, rol: userType, userID: +userID }),
+      this._tagRepo.findAllByID(tagIDs),
+    ]).then(([item, tags]) => {
+      this._itemRepo.updateTags({ item, tags }).then(() =>
+        res.status(HttpStatus.OK).send({
+          status: HttpStatus.OK,
+          message: `tags updated for item with id = ${itemID}`,
+          item: {
+            ...item,
+            tags,
+          },
+        }),
+      );
+    });
+  }
 }
