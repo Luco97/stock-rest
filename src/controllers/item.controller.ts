@@ -122,10 +122,28 @@ export class ItemController {
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   update(
+    @Headers('user_id') userID: string,
+    @Headers('user_type') userType: string,
     @Param('itemID', ParseIntPipe) itemID: number,
     @Body() cuerpo: UpdateItem,
     @Res() res: FastifyReply,
-  ) {}
+  ) {
+    const { imageUrl, name, price, stock } = cuerpo;
+
+    this._itemRepo
+      .findOne({ rol: userType, itemID, userID: +userID })
+      .then((item) =>
+        this._itemRepo
+          .updateItem({ imageUrl, item, name, price, stock })
+          .then((updateItem) =>
+            res.status(HttpStatus.OK).send({
+              status: HttpStatus.OK,
+              message: `item with id = ${itemID} updated`,
+              item: updateItem,
+            }),
+          ),
+      );
+  }
 
   @Delete(':itemID/delete')
   @SetMetadata('roles', ['admin'])
