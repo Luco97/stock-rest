@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { EntityData, QueryResult, wrap } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
@@ -96,41 +95,37 @@ export class ItemRepoService {
   }
 
   updateItem(params: {
-    userID: number;
-    itemID: number;
+    item: ItemModel;
     name: string;
     stock: number;
     price: number;
     imageUrl: string;
-    rol: string;
-  }): Promise<QueryResult<ItemModel>> {
-    const { itemID, userID, imageUrl, name, price, stock, rol } = params;
-    const updateItem: EntityData<ItemModel> = {};
+  }): Promise<ItemModel> {
+    const { imageUrl, name, price, stock, item } = params;
 
-    if (name) updateItem['name'] = name;
-    if (imageUrl) updateItem['imageUrl'] = imageUrl;
-    if (price) updateItem['price'] = price;
-    if (stock) updateItem['stock'] = stock;
+    if (name) item['name'] = name;
+    if (price) item['price'] = price;
+    if (stock) item['stock'] = stock;
+    if (imageUrl) item['imageUrl'] = imageUrl;
 
-    return this._itemRepo
-      .createQueryBuilder('item')
-      .leftJoin('item.user', 'user')
-      .update(updateItem)
-      .where({
-        $and: [
-          { 'item.id': itemID },
-          { $or: [{ 'user.type': rol }, { 'user.id': userID }] },
-        ],
-      })
-      .execute('get');
+    return new Promise<ItemModel>((resolve, reject) =>
+      this._itemRepo.persistAndFlush(item).then(() => {
+        resolve(item);
+      }),
+    );
   }
 
-  updateTags(params: { item: ItemModel; tags: TagModel[] }) {
+  updateTags(params: {
+    item: ItemModel;
+    tags: TagModel[];
+  }): Promise<ItemModel> {
     const { item, tags } = params;
 
     item.tags.removeAll();
     item.tags.add(tags);
 
-    return this._itemRepo.flush();
+    return new Promise<ItemModel>((resolve, reject) =>
+      this._itemRepo.flush().then(() => resolve(item)),
+    );
   }
 }
