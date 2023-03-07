@@ -6,6 +6,7 @@ import {
   Collection,
   ManyToMany,
   PrimaryKey,
+  Cascade,
 } from '@mikro-orm/core';
 
 import { TagModel } from '../tag/tag-model';
@@ -38,7 +39,9 @@ export class ItemModel {
   @ManyToOne(() => UserModel)
   user!: UserModel;
 
-  @OneToMany(() => HistoricModel, (historic) => historic.item)
+  @OneToMany(() => HistoricModel, (historic) => historic.item, {
+    cascade: [Cascade.REMOVE],
+  })
   changes: Collection<HistoricModel> = new Collection<HistoricModel>(this);
 
   @ManyToMany(() => TagModel, 'items', {

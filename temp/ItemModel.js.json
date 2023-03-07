@@ -68,7 +68,7 @@
       "changes": {
         "name": "changes",
         "reference": "1:m",
-        "cascade": ["persist"],
+        "cascade": ["remove"],
         "type": "HistoricModel",
         "array": false
       },
@@ -150,7 +150,7 @@
       {
         "name": "changes",
         "reference": "1:m",
-        "cascade": ["persist"],
+        "cascade": ["remove"],
         "type": "HistoricModel",
         "array": false
       },
@@ -192,7 +192,7 @@
       {
         "name": "changes",
         "reference": "1:m",
-        "cascade": ["persist"],
+        "cascade": ["remove"],
         "type": "HistoricModel",
         "array": false
       },
@@ -210,6 +210,6 @@
     "collection": "item_model"
   },
   "origin": "./dist/models/item/item-model.js",
-  "hash": "498578300c6cfaa30d82ce92d0f9183f",
+  "hash": "1c092d982ebbab4fd109e82eb95ce436",
   "version": "5.6.9"
 }
