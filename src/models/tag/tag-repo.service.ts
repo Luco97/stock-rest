@@ -43,20 +43,20 @@ export class TagRepoService {
   // }
 
   // Admin only
-  create(params: { name: string; description: string }) {
+  create(params: { name: string; description: string }): Promise<TagModel> {
     const { description, name } = params;
 
-    return this._tagRepo.persistAndFlush(
-      this._tagRepo.create({ name, description }),
-    );
+    return new Promise<TagModel>((resolve, reject) => {
+      const newTag: TagModel = this._tagRepo.create({ name, description });
+      this._tagRepo.persistAndFlush(newTag).then(() => resolve(newTag));
+    });
   }
 
   // Admin only
-  update(id: number, description: string) {
-    return this._tagRepo
-      .createQueryBuilder('tag')
-      .update({ description })
-      .where({ id })
-      .execute('get');
+  update(description: string, tag: TagModel) {
+    return new Promise<TagModel>((resolve, reject) => {
+      tag['description'] = description;
+      this._tagRepo.persistAndFlush(tag).then(() => resolve(tag));
+    });
   }
 }
