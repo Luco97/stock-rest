@@ -4,8 +4,6 @@ import {
   OnModuleInit,
   MiddlewareConsumer,
 } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 import { MikroORM } from '@mikro-orm/core';
 
@@ -22,6 +20,11 @@ import { TagController } from './controllers/tag.controller';
 import { AuthController } from './controllers/auth.controller';
 import { ItemController } from './controllers/item.controller';
 
+// Servicios
+import { TagService } from './services/tag.service';
+import { UserService } from './services/user.service';
+import { ItemService } from './services/item.service';
+
 @Module({
   imports: [
     MikroOrmModule.forRoot(),
@@ -31,8 +34,8 @@ import { ItemController } from './controllers/item.controller';
     HistoricModule,
     AuthModule,
   ],
-  controllers: [AppController, AuthController, TagController, ItemController],
-  providers: [AppService],
+  controllers: [AuthController, TagController, ItemController],
+  providers: [TagService, UserService, ItemService],
 })
 export class AppModule implements NestModule, OnModuleInit {
   constructor(private _orm: MikroORM) {}
