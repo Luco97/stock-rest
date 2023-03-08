@@ -150,9 +150,15 @@ export class ItemController {
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   delete(
+    @Headers('user_id') userID: string,
+    @Headers('user_type') userType: string,
     @Param('itemID', ParseIntPipe) itemID: number,
     @Res() res: FastifyReply,
-  ) {}
+  ) {
+    this._itemRepo
+      .delete({ itemID, rol: userType, userID: +userID })
+      .then((message) => res.status(HttpStatus.OK).send({ message }));
+  }
 
   @Get(':itemID/changes')
   @SetMetadata('roles', ['basic', 'admin'])
