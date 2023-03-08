@@ -17,6 +17,14 @@ Algunas de las herramientas utilizadas son:
 - Fastify
 - class-validators para Body tipado
 
+Diferencias con la version en GraphQL
+
+- No hay softDelete
+- Query Builder funciona como el culo, Updates y Deletes en Query Builder de Postgresql no crean SQL con joins ni auto-joins son generados (pruebas en repo de Mikro-ORM pasan la prueba pero en MySQL)
+- Uso de entidad virtual en el caso de tag para obtener numero de items por tag
+
+
+
 <hr>
 
 <p align="center">
