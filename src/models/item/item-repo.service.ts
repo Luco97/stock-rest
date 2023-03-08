@@ -128,4 +128,28 @@ export class ItemRepoService {
       this._itemRepo.flush().then(() => resolve(item)),
     );
   }
+
+  delete(params: { rol: string; userID: number; itemID: number }) {
+    const { itemID, rol, userID } = params;
+    return new Promise<string>((resolve, reject) =>
+      this._itemRepo
+        .createQueryBuilder('item')
+        .leftJoin('item.user', 'user')
+        .leftJoinAndSelect('item.changes', 'changes')
+        .where({
+          $and: [
+            { 'item.id': itemID },
+            { $or: [{ "lower('admin')": rol }, { 'user.id': userID }] },
+          ],
+        })
+        .getSingleResult()
+        .then((item) => {
+          if (!item) resolve('no item found');
+          else
+            this._itemRepo.removeAndFlush(item).then(() => {
+              resolve(`item with id = ${item.id} removed`);
+            });
+        }),
+    );
+  }
 }
