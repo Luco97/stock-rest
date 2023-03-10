@@ -170,15 +170,15 @@ export class ItemController {
     @Param('itemID', ParseIntPipe) itemID: number,
     @Query('take') take: string,
     @Query('skip') skip: string,
-    @Query('orderBy') orderBy: string,
+    @Query('order') order: string,
     @Res()
     res: FastifyReply,
   ) {
     this._historicRepo
       .findItemChanges({
         itemID,
-        orderBy: ['ASC', 'DESC'].includes(orderBy)
-          ? (orderBy as 'ASC' | 'DESC')
+        orderBy: ['ASC', 'DESC'].includes(order)
+          ? (order as 'ASC' | 'DESC')
           : 'ASC',
         take: +take || 5,
         skip: +skip || 0,
@@ -216,10 +216,7 @@ export class ItemController {
         res.status(HttpStatus.OK).send({
           status: HttpStatus.OK,
           message: `tags updated for item with id = ${itemID}`,
-          item: {
-            ...item,
-            tags,
-          },
+          item,
         }),
       );
     });
