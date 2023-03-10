@@ -17,20 +17,14 @@ import {
 import { HttpStatus } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 
-import { TagRepoService } from '@models/tag';
-import { ItemRepoService } from '@models/item';
-import { HistoricRepoService } from '@models/historic';
 import { CreateItem, UpdateItem, UpdateTags } from '@dto/item';
 import { RoleGuard } from '../guards/role.guard';
+import { ItemService } from '../services/item.service';
 import { GetTokenInterceptor } from '../interceptors/get-token.interceptor';
 
 @Controller('item')
 export class ItemController {
-  constructor(
-    private _tagRepo: TagRepoService,
-    private _itemRepo: ItemRepoService,
-    private _historicRepo: HistoricRepoService,
-  ) {}
+  constructor(private _itemService: ItemService) {}
 
   @Get()
   @SetMetadata('roles', ['basic', 'admin'])
@@ -50,21 +44,15 @@ export class ItemController {
     search: string[],
     @Res() res: FastifyReply,
   ) {
-    this._itemRepo
+    this._itemService
       .findAll({
-        take: +take || 10,
-        skip: +skip || 0,
-        search: search || [],
-        order: ['ASC', 'DESC'].includes(orderBy)
-          ? (orderBy as 'ASC' | 'DESC')
-          : 'ASC',
-        orderBy: ['createdAt', 'name', 'updatedAt', 'price', 'stock'].includes(
-          orderBy,
-        )
-          ? `item.${orderBy}`
-          : 'item.createdAt',
-        rol: userType,
+        order,
+        search,
+        skip: +skip,
+        take: +take,
+        orderBy,
         userID: +userID,
+        userType,
       })
       .then(([items, count]) =>
         res.status(HttpStatus.OK).send({ items, count }),
@@ -81,7 +69,7 @@ export class ItemController {
     @Param('itemID', ParseIntPipe) itemID: number,
     @Res() res: FastifyReply,
   ) {
-    this._itemRepo
+    this._itemService
       .findOne({ itemID, rol: userType, userID: +userID })
       .then((item) => {
         res.send({
@@ -100,21 +88,9 @@ export class ItemController {
     @Res() res: FastifyReply,
   ) {
     const { name, imageUrl, price, stock } = createBody;
-    this._itemRepo
+    this._itemService
       .create({ imageUrl, name, price, stock, userID: +userID })
-      .then((result) => {
-        res.status(HttpStatus.OK).send({
-          status: HttpStatus.OK,
-          message: 'item created',
-          item: {
-            id: result.insertId,
-            name,
-            price,
-            stock,
-            imageUrl,
-          },
-        });
-      });
+      .then((response) => res.status(response.status).send(response));
   }
 
   @Post(':itemID/update')
@@ -129,20 +105,17 @@ export class ItemController {
     @Res() res: FastifyReply,
   ) {
     const { imageUrl, name, price, stock } = cuerpo;
-
-    this._itemRepo
-      .findOne({ rol: userType, itemID, userID: +userID })
-      .then((item) =>
-        this._itemRepo
-          .updateItem({ imageUrl, item, name, price, stock })
-          .then((updateItem) =>
-            res.status(HttpStatus.OK).send({
-              status: HttpStatus.OK,
-              message: `item with id = ${itemID} updated`,
-              item: updateItem,
-            }),
-          ),
-      );
+    this._itemService
+      .update({
+        imageUrl,
+        itemID,
+        name,
+        price,
+        stock,
+        userID: +userID,
+        userType,
+      })
+      .then((response) => res.status(response.status).send(response));
   }
 
   @Delete(':itemID/delete')
@@ -155,8 +128,8 @@ export class ItemController {
     @Param('itemID', ParseIntPipe) itemID: number,
     @Res() res: FastifyReply,
   ) {
-    this._itemRepo
-      .delete({ itemID, rol: userType, userID: +userID })
+    this._itemService
+      .delete({ itemID, userType, userID: +userID })
       .then((message) => res.status(HttpStatus.OK).send({ message }));
   }
 
@@ -174,16 +147,14 @@ export class ItemController {
     @Res()
     res: FastifyReply,
   ) {
-    this._historicRepo
-      .findItemChanges({
+    this._itemService
+      .itemHistoric({
         itemID,
-        orderBy: ['ASC', 'DESC'].includes(order)
-          ? (order as 'ASC' | 'DESC')
-          : 'ASC',
-        take: +take || 5,
-        skip: +skip || 0,
+        order,
+        skip: +skip,
+        take: +take,
+        userType,
         userID: +userID,
-        rol: userType,
       })
       .then(([changes, count]) =>
         res.status(HttpStatus.OK).send({
@@ -208,17 +179,13 @@ export class ItemController {
   ) {
     const { tagIDs } = cuerpo;
 
-    Promise.all([
-      this._itemRepo.findOne({ itemID, rol: userType, userID: +userID }),
-      this._tagRepo.findAllByID(tagIDs),
-    ]).then(([item, tags]) => {
-      this._itemRepo.updateTags({ item, tags }).then(() =>
-        res.status(HttpStatus.OK).send({
-          status: HttpStatus.OK,
-          message: `tags updated for item with id = ${itemID}`,
-          item,
-        }),
-      );
-    });
+    this._itemService
+      .updateItemTags({
+        itemID,
+        tagIDs,
+        userID: +userID,
+        userType,
+      })
+      .then((response) => res.status(response.status).send(response));
   }
 }
