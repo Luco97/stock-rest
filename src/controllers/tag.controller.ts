@@ -1,4 +1,3 @@
-import { TagRepoService } from '@models/tag';
 import {
   Get,
   Res,
@@ -11,15 +10,17 @@ import {
   SetMetadata,
   ParseIntPipe,
 } from '@nestjs/common';
-import { AlphanumericPipe } from '@shared/pipes';
-import { FastifyReply } from 'fastify';
-import { RoleGuard } from '../guards/role.guard';
-import { CreateTag, UpdateTags } from '@dto/tag';
 import { HttpStatus } from '@nestjs/common';
+import { FastifyReply } from 'fastify';
+
+import { AlphanumericPipe } from '@shared/pipes';
+import { CreateTag, UpdateTags } from '@dto/tag';
+import { RoleGuard } from '../guards/role.guard';
+import { TagService } from '../services/tag.service';
 
 @Controller('tag')
 export class TagController {
-  constructor(private _tagRepo: TagRepoService) {}
+  constructor(private _tagService: TagService) {}
 
   @Get()
   findAll(
@@ -28,12 +29,8 @@ export class TagController {
     @Query('term', AlphanumericPipe) term: string,
     @Res() res: FastifyReply,
   ) {
-    this._tagRepo
-      .findAll({
-        take: +take || 10,
-        skip: +skip || 0,
-        name: term || '',
-      })
+    this._tagService
+      .findAll({ skip: +skip, take: +take, term })
       .then(([tags, count]) => res.status(HttpStatus.OK).send({ tags, count }));
   }
 
@@ -43,7 +40,7 @@ export class TagController {
   create(@Body() createTag: CreateTag, @Res() res: FastifyReply) {
     const { description, name } = createTag;
 
-    this._tagRepo
+    this._tagService
       .create({ name, description })
       .then((newTag) =>
         res
@@ -62,19 +59,8 @@ export class TagController {
   ) {
     const { description } = updateTag;
 
-    this._tagRepo.findAllByID([tagID]).then(([tag]) => {
-      if (!tag)
-        res
-          .status(HttpStatus.OK)
-          .send({ status: HttpStatus.OK, message: 'no tag with that id' });
-      else
-        this._tagRepo.update(description, tag).then((newTag) =>
-          res.status(HttpStatus.OK).send({
-            status: HttpStatus.OK,
-            message: `tag with id = ${newTag.id} updated`,
-            tag: newTag,
-          }),
-        );
-    });
+    this._tagService
+      .update(tagID, description)
+      .then((response) => res.status(response.status).send(response));
   }
 }
