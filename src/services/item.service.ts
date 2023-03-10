@@ -165,7 +165,7 @@ export class ItemService {
           if (!item)
             resolve({
               status: HttpStatus.OK,
-              message: `tags updated for item with id = ${itemID}`,
+              message: `no item with id = ${itemID}`,
             });
           else
             this._itemRepo.updateTags({ item, tags }).then(() => {
