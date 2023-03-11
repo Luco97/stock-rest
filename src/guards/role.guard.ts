@@ -21,10 +21,14 @@ export class RoleGuard implements CanActivate {
       context.getHandler(),
     );
 
-    if (!this._authService.validateToken(request.headers?.authorization))
-      of(false);
+    const token: string = request.headers?.authorization?.replace(
+      /Bearer /g,
+      '',
+    );
 
-    const userID = this._authService.userID(request.headers?.authorization);
+    if (!this._authService.validateToken(token)) return of(false);
+
+    const userID = this._authService.userID(token);
 
     return from(this._userService.countRoles({ userID, roles })).pipe(
       map<number, boolean>((count) => (count ? true : false)),
