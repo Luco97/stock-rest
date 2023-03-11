@@ -21,7 +21,7 @@ export class AuthController {
     );
   }
 
-  @Post('sign') signIn(@Body() sign_user: SignIn, @Res() res: FastifyReply) {
+  @Post('sign-in') signIn(@Body() sign_user: SignIn, @Res() res: FastifyReply) {
     const { email, password } = sign_user;
 
     this._userService
