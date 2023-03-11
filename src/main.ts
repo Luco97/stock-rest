@@ -9,6 +9,7 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter(),
   );
+  app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
   await app.listen(3000, '0.0.0.0');
 }
