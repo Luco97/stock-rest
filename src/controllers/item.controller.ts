@@ -55,7 +55,9 @@ export class ItemController {
         userType,
       })
       .then(([items, count]) =>
-        res.status(HttpStatus.OK).send({ items, count }),
+        res
+          .status(HttpStatus.OK)
+          .send({ items, count, status: HttpStatus.OK, message: 'All items' }),
       );
   }
 
@@ -74,6 +76,8 @@ export class ItemController {
       .then((item) => {
         res.send({
           item,
+          status: HttpStatus.OK,
+          message: 'All items',
         });
       });
   }
@@ -166,7 +170,7 @@ export class ItemController {
       );
   }
 
-  @Post(':itemID/update/tags')
+  @Post(':itemID/update-tags')
   @SetMetadata('roles', ['basic', 'admin'])
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
