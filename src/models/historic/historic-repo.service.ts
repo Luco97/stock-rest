@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { QueryResult } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
-import { ItemModel } from '../item/item-model';
 import { HistoricModel } from './historic-model';
 
 @Injectable()
@@ -37,12 +37,15 @@ export class HistoricRepoService {
       .getResultAndCount();
   }
 
-  create(item: ItemModel, params: { change: string; previousValue: string }) {
+  create(
+    itemID: number,
+    params: { change: string; previousValue: string },
+  ): Promise<QueryResult<HistoricModel>> {
     const { change, previousValue } = params;
 
-    this._historyRepo
+    return this._historyRepo
       .createQueryBuilder()
-      .insert({ item, change, previousValue })
-      .execute('get');
+      .insert({ item: { id: itemID }, change, previousValue })
+      .execute('run');
   }
 }
