@@ -14,7 +14,7 @@ export class RoleGuard implements CanActivate {
     private readonly _authService: AuthService,
     private readonly _userService: UserRepoService,
   ) {}
-  canActivate(context: ExecutionContext): boolean | Observable<boolean> {
+  canActivate(context: ExecutionContext): Observable<boolean> {
     const request: FastifyRequest = context.switchToHttp().getRequest();
     const roles: string[] = this._reflector.get<string[]>(
       'roles',
