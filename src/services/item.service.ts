@@ -1,9 +1,9 @@
-import { RequiredEntityData } from '@mikro-orm/core';
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { QueryResult, RequiredEntityData } from '@mikro-orm/core';
 
 import { TagRepoService } from '@models/tag';
-import { HistoricModel, HistoricRepoService } from '@models/historic';
 import { ItemModel, ItemRepoService } from '@models/item';
+import { HistoricModel, HistoricRepoService } from '@models/historic';
 
 @Injectable()
 export class ItemService {
@@ -102,16 +102,42 @@ export class ItemService {
                 status: HttpStatus.OK,
                 message: `no item with id = ${itemID} found`,
               });
-            else
-              this._itemRepo
-                .updateItem({ imageUrl, item, name, price, stock })
-                .then((updateItem) =>
-                  resolve({
-                    status: HttpStatus.OK,
-                    message: `item with id = ${itemID} updated`,
-                    item: updateItem,
-                  }),
-                );
+            else {
+              const allChanges = this.allChanges({
+                imageUrl,
+                name,
+                price,
+                stock,
+                item,
+              });
+
+              // this._itemRepo
+              //   .updateItem({ imageUrl, item, name, price, stock })
+              //   .then((updateItem) =>
+              //     resolve({
+              //       status: HttpStatus.OK,
+              //       message: `item with id = ${itemID} updated`,
+              //       item: updateItem,
+              //     }),
+              //   );
+
+              Promise.all([
+                this._itemRepo.updateItem({
+                  imageUrl,
+                  item,
+                  name,
+                  price,
+                  stock,
+                }),
+                ...allChanges,
+              ]).then(([updateItem]) =>
+                resolve({
+                  status: HttpStatus.OK,
+                  message: `item with id = ${itemID} updated`,
+                  item: updateItem,
+                }),
+              );
+            }
           }),
     );
   }
@@ -179,5 +205,46 @@ export class ItemService {
             });
         }),
     );
+  }
+
+  private allChanges(params: {
+    imageUrl: string;
+    name: string;
+    price: number;
+    stock: number;
+    item: ItemModel;
+  }): Promise<QueryResult<HistoricModel>>[] {
+    const { imageUrl, name, price, stock, item } = params;
+    const allChanges: Promise<QueryResult<HistoricModel>>[] = [];
+    if (imageUrl)
+      allChanges.push(
+        this._historicRepo.create(item.id, {
+          change: 'image',
+          previousValue: item.imageUrl,
+        }),
+      );
+    if (name)
+      allChanges.push(
+        this._historicRepo.create(item.id, {
+          change: 'name',
+          previousValue: item.name,
+        }),
+      );
+    if (price)
+      allChanges.push(
+        this._historicRepo.create(item.id, {
+          change: 'price',
+          previousValue: item.price.toString(),
+        }),
+      );
+    if (stock)
+      allChanges.push(
+        this._historicRepo.create(item.id, {
+          change: 'stock',
+          previousValue: item.stock.toString(),
+        }),
+      );
+
+    return allChanges;
   }
 }
