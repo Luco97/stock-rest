@@ -192,4 +192,15 @@ export class ItemController {
       })
       .then((response) => res.status(response.status).send(response));
   }
+
+  @Get(':itemID/related-items')
+  @SetMetadata('roles', ['basic', 'admin'])
+  @UseGuards(RoleGuard)
+  @UseInterceptors(GetTokenInterceptor)
+  relatedItems(
+    @Headers('user_id') userID: string,
+    @Headers('user_type') userType: string,
+    @Param('itemID', ParseIntPipe) itemID: number,
+    @Res() res: FastifyReply,
+  ) {}
 }
