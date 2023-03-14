@@ -42,6 +42,11 @@ export class ItemController {
       new ParseArrayPipe({ items: String, optional: true, separator: ',' }),
     )
     search: string[],
+    @Query(
+      'tagsID',
+      new ParseArrayPipe({ items: Number, optional: true, separator: ',' }),
+    )
+    tagsID: number[],
     @Res() res: FastifyReply,
   ) {
     this._itemService
@@ -201,6 +206,11 @@ export class ItemController {
     @Headers('user_id') userID: string,
     @Headers('user_type') userType: string,
     @Param('itemID', ParseIntPipe) itemID: number,
+    @Query(
+      'tagsID',
+      new ParseArrayPipe({ items: Number, optional: true, separator: ',' }),
+    )
+    tagsID: number[],
     @Res() res: FastifyReply,
   ) {}
 }
