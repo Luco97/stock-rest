@@ -20,12 +20,13 @@ export class ItemService {
     orderBy: string;
     userID: number;
     userType: string;
-    search: string[];
+    search?: string[];
+    tagsID?: number[];
   }): Promise<[ItemModel[], number]> {
-    const { order, orderBy, skip, take, userID, userType, search } = params;
+    const { order, orderBy, skip, take, userID, userType, search, tagsID } =
+      params;
 
     return this._itemRepo.findAll({
-      search: search || [],
       take: take || 10,
       skip: skip || 0,
       order: ['ASC', 'DESC'].includes(order)
@@ -38,6 +39,8 @@ export class ItemService {
         : 'item.createdAt',
       rol: userType,
       userID: userID,
+      search: search || [],
+      tagsID: tagsID || [],
     });
   }
 
