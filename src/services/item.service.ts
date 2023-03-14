@@ -25,9 +25,9 @@ export class ItemService {
     const { order, orderBy, skip, take, userID, userType, search } = params;
 
     return this._itemRepo.findAll({
+      search: search || [],
       take: take || 10,
       skip: skip || 0,
-      search: search || [],
       order: ['ASC', 'DESC'].includes(order)
         ? (order as 'ASC' | 'DESC')
         : 'ASC',
@@ -246,5 +246,53 @@ export class ItemService {
       );
 
     return allChanges;
+  }
+
+  relatedItems(params: {
+    itemID: number;
+    take: number;
+    order: string;
+    skip: number;
+    userID: number;
+    userType: string;
+  }) {
+    const { itemID, userID, skip, take, order, userType } = params;
+
+    return new Promise<{
+      status: number;
+      message: string;
+      items?: ItemModel[];
+      count?: number;
+    }>((resolve, reject) => {
+      this.findOne({ itemID, rol: userType, userID }).then((item) => {
+        if (!item.tags.length)
+          resolve({ status: HttpStatus.OK, message: 'no items related' });
+        else {
+          const tagsID: number[] = item.tags
+            .getItems()
+            .map<number>((element) => element.id);
+
+          this._itemRepo
+            .relatedItems({
+              take: take || 10,
+              skip: skip || 0,
+              order: ['ASC', 'DESC'].includes(order)
+                ? (order as 'ASC' | 'DESC')
+                : 'ASC',
+              orderBy: 'item.createdAt',
+              tagsID,
+              userID,
+            })
+            .then(([items, count]) =>
+              resolve({
+                status: HttpStatus.OK,
+                message: `items related to "${item.name}"`,
+                items,
+                count,
+              }),
+            );
+        }
+      });
+    });
   }
 }
