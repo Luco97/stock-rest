@@ -26,7 +26,10 @@ export class TagService {
     return this._tagRepo.create({ name, description });
   }
 
-  update(tagID: number, description: string) {
+  update(
+    tagID: number,
+    description: string,
+  ): Promise<{ status: number; message: string; tag?: TagModel }> {
     return new Promise<{ status: number; message: string; tag?: TagModel }>(
       (resolve, reject) =>
         this._tagRepo.findAllByID([tagID]).then(([tag]) => {
