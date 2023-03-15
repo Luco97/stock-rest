@@ -206,11 +206,25 @@ export class ItemController {
     @Headers('user_id') userID: string,
     @Headers('user_type') userType: string,
     @Param('itemID', ParseIntPipe) itemID: number,
+    @Query('take') take: string,
+    @Query('skip') skip: string,
+    @Query('order') order: string,
     @Query(
       'tagsID',
       new ParseArrayPipe({ items: Number, optional: true, separator: ',' }),
     )
     tagsID: number[],
     @Res() res: FastifyReply,
-  ) {}
+  ) {
+    this._itemService
+      .relatedItems({
+        itemID,
+        order,
+        skip: +skip || 0,
+        take: +take || 10,
+        userID: +userID,
+        userType,
+      })
+      .then((response) => res.status(response.status).send(response));
+  }
 }
