@@ -64,4 +64,8 @@ export class UserService {
         }),
     );
   }
+
+  validateToken(token: string): boolean {
+    return this._authService.validateToken(token);
+  }
 }
