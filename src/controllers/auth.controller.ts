@@ -1,4 +1,11 @@
-import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
+import {
+  Res,
+  Post,
+  Body,
+  Headers,
+  HttpStatus,
+  Controller,
+} from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 
 import { Register, SignIn } from '@dto/auth';
@@ -27,5 +34,20 @@ export class AuthController {
     this._userService
       .signIn({ email, password })
       .then((response) => res.status(response.status).send(response));
+  }
+
+  @Post('validate-token')
+  validateToken(
+    @Headers('Authorization') token: string,
+    @Res() res: FastifyReply,
+  ) {
+    const isValid: boolean = this._userService.validateToken(
+      token.replace(/Bearer /g, ''),
+    );
+    res.status(HttpStatus.OK).send({
+      status: HttpStatus.OK,
+      message: isValid ? 'user valid' : 'GTFO',
+      valid: isValid,
+    });
   }
 }
