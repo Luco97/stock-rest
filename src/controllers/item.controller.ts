@@ -1,6 +1,7 @@
 import {
   Res,
   Get,
+  Put,
   Post,
   Body,
   Query,
@@ -102,7 +103,7 @@ export class ItemController {
       .then((response) => res.status(response.status).send(response));
   }
 
-  @Post(':itemID/update')
+  @Put(':itemID/update')
   @SetMetadata('roles', ['basic', 'admin'])
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
@@ -175,7 +176,7 @@ export class ItemController {
       );
   }
 
-  @Post(':itemID/update-tags')
+  @Put(':itemID/update-tags')
   @SetMetadata('roles', ['basic', 'admin'])
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)

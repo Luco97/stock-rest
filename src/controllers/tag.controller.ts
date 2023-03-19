@@ -1,6 +1,7 @@
 import {
   Get,
   Res,
+  Put,
   Body,
   Post,
   Param,
@@ -49,7 +50,7 @@ export class TagController {
       );
   }
 
-  @Post(':tagID/update')
+  @Put(':tagID/update')
   @SetMetadata('roles', ['admin'])
   @UseGuards(RoleGuard)
   update(
