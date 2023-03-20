@@ -21,10 +21,7 @@ export class RoleGuard implements CanActivate {
       context.getHandler(),
     );
 
-    const token: string = request.headers?.authorization?.replace(
-      /Bearer /g,
-      '',
-    );
+    const token: string = request.headers?.authorization;
 
     if (!this._authService.validateToken(token)) return of(false);
 

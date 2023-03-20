@@ -16,7 +16,7 @@ export class GetTokenInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request: FastifyRequest = context.switchToHttp().getRequest();
     const { id, name, type } = this._authService.getContext(
-      request.headers?.authorization?.replace(/Bearer /g, ''),
+      request.headers?.authorization,
     );
 
     request.headers['user_id'] = id.toString();
