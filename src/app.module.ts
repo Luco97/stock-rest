@@ -2,14 +2,14 @@ import {
   Module,
   NestModule,
   OnModuleInit,
+  RequestMethod,
   MiddlewareConsumer,
 } from '@nestjs/common';
-
 import { MikroORM } from '@mikro-orm/core';
 
 // Modulos
-import { AuthModule } from '@shared/auth';
 import { TagModule } from '@models/tag';
+import { AuthModule } from '@shared/auth';
 import { UserModule } from '@models/user';
 import { ItemModule } from '@models/item';
 import { HistoricModule } from '@models/historic';
@@ -24,6 +24,9 @@ import { ItemController } from './controllers/item.controller';
 import { TagService } from './services/tag.service';
 import { UserService } from './services/user.service';
 import { ItemService } from './services/item.service';
+
+// Middleware
+import { BearerTokenMiddleware } from './middleware/bearer-token.middleware';
 
 @Module({
   imports: [
@@ -43,5 +46,13 @@ export class AppModule implements NestModule, OnModuleInit {
     await this._orm.getMigrator().up();
   }
 
-  configure(consumer: MiddlewareConsumer) {}
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(BearerTokenMiddleware)
+      .forRoutes(
+        { path: 'auth/validate-token', method: RequestMethod.POST },
+        TagController,
+        ItemController,
+      );
+  }
 }
