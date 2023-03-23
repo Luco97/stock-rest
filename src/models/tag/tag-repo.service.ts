@@ -1,9 +1,9 @@
-import { Loaded } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
-import { TagModel, TagItemsCount } from './tag-model';
+import { TagModel } from './tag-model';
+import { TagItemsCount } from './tag-item-count-virtual';
 
 @Injectable()
 export class TagRepoService {
