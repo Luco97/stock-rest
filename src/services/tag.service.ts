@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 
-import { TagItemsCount, TagModel, TagRepoService } from '@models/tag';
+import { TagModel, TagRepoService, TagItemsCount } from '@models/tag';
 
 @Injectable()
 export class TagService {
