@@ -24,10 +24,14 @@ export class AuthService {
     });
   }
 
-  validateToken(token: string): boolean {
+  validateToken(token: string, type?: string): boolean {
     try {
-      const validation = this.verify(token);
-      if (validation.context.username && validation.context.extra) return true;
+      const validation: PayloadInterface = this.verify(token);
+      if (validation.context.username && validation.context.extra) {
+        if (!type) return true;
+        else if (type && type == validation.context.type) return true;
+        return false;
+      }
     } catch (error) {
       return false;
     }

@@ -65,7 +65,7 @@ export class UserService {
     );
   }
 
-  validateToken(token: string): boolean {
-    return this._authService.validateToken(token);
+  validateToken(token: string, type?: string): boolean {
+    return this._authService.validateToken(token, type);
   }
 }

@@ -2,6 +2,7 @@ import {
   Res,
   Post,
   Body,
+  Param,
   Headers,
   HttpStatus,
   Controller,
@@ -36,14 +37,13 @@ export class AuthController {
       .then((response) => res.status(response.status).send(response));
   }
 
-  @Post('validate-token')
+  @Post(['validate-token', 'validate-token/:type'])
   validateToken(
     @Headers('Authorization') token: string,
+    @Param('type') type: string,
     @Res() res: FastifyReply,
   ) {
-    const isValid: boolean = this._userService.validateToken(
-      token.replace(/Bearer /g, ''),
-    );
+    const isValid: boolean = this._userService.validateToken(token, type);
     res.status(HttpStatus.OK).send({
       status: HttpStatus.OK,
       message: isValid ? 'user valid' : 'GTFO',
