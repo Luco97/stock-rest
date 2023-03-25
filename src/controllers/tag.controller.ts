@@ -32,7 +32,11 @@ export class TagController {
   ) {
     this._tagService
       .findAll({ skip: +skip, take: +take, term })
-      .then(([tags, count]) => res.status(HttpStatus.OK).send({ tags, count }));
+      .then(([tags, count]) =>
+        res
+          .status(HttpStatus.OK)
+          .send({ tags, count, message: `tags found: ${count}` }),
+      );
   }
 
   @Post('create')
