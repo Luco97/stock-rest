@@ -6,6 +6,7 @@ import {
   MiddlewareConsumer,
 } from '@nestjs/common';
 import { MikroORM } from '@mikro-orm/core';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 // Modulos
 import { TagModule } from '@models/tag';
@@ -13,7 +14,7 @@ import { AuthModule } from '@shared/auth';
 import { UserModule } from '@models/user';
 import { ItemModule } from '@models/item';
 import { HistoricModule } from '@models/historic';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { CloudinaryModule } from '@shared/cloudinary';
 
 // Controladores
 import { TagController } from './controllers/tag.controller';
@@ -36,6 +37,7 @@ import { BearerTokenMiddleware } from './middleware/bearer-token.middleware';
     TagModule,
     HistoricModule,
     AuthModule,
+    CloudinaryModule,
   ],
   controllers: [AuthController, TagController, ItemController],
   providers: [TagService, UserService, ItemService],
