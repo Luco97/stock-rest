@@ -6,7 +6,7 @@ import { CloudinaryService } from './services/cloudinary.service';
   providers: [CloudinaryService],
 })
 export class CloudinaryModule {
-  forRoot(config: {
+  static forRoot(config: {
     cloud_name: string;
     api_key: string;
     api_secret: string;
