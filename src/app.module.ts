@@ -5,6 +5,7 @@ import {
   RequestMethod,
   MiddlewareConsumer,
 } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { MikroORM } from '@mikro-orm/core';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 
@@ -31,13 +32,19 @@ import { BearerTokenMiddleware } from './middleware/bearer-token.middleware';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     MikroOrmModule.forRoot(),
     UserModule,
     ItemModule,
     TagModule,
     HistoricModule,
     AuthModule,
-    CloudinaryModule,
+    CloudinaryModule.forRoot({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+      secure: true,
+    }),
   ],
   controllers: [AuthController, TagController, ItemController],
   providers: [TagService, UserService, ItemService],
