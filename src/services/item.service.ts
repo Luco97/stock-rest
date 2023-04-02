@@ -1,7 +1,9 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { QueryResult, RequiredEntityData } from '@mikro-orm/core';
+import { unlink } from 'fs';
 
 import { TagRepoService } from '@models/tag';
+import { CloudinaryService } from '@shared/cloudinary';
 import { ItemModel, ItemRepoService } from '@models/item';
 import { HistoricModel, HistoricRepoService } from '@models/historic';
 
@@ -11,6 +13,7 @@ export class ItemService {
     private _tagRepo: TagRepoService,
     private _itemRepo: ItemRepoService,
     private _historicRepo: HistoricRepoService,
+    private _cloudinaryService: CloudinaryService,
   ) {}
 
   findAll(params: {
@@ -55,7 +58,7 @@ export class ItemService {
   }
 
   create(params: {
-    imageUrl: string;
+    file: Express.Multer.File;
     name: string;
     price: number;
     stock: number;
@@ -65,22 +68,50 @@ export class ItemService {
     message: string;
     item: RequiredEntityData<ItemModel>;
   }> {
-    const { imageUrl, name, price, stock, userID } = params;
+    const { file, name, price, stock, userID } = params;
 
     return new Promise<{
       status: number;
       message: string;
       item: RequiredEntityData<ItemModel>;
     }>((resolve, reject) =>
-      this._itemRepo
-        .create({ imageUrl, name, price, stock, userID })
-        .then((result) =>
-          resolve({
-            status: HttpStatus.OK,
-            message: 'item created',
-            item: { name, imageUrl, price, stock, id: result.insertId },
-          }),
-        ),
+      this._cloudinaryService
+        .upload(
+          file.path,
+          `product_${name.toLowerCase().replace(' ', '-')}`,
+          file.filename,
+        )
+        .then((cloudinaryResponse) => {
+          unlink(
+            file.path,
+            (error) =>
+              new Error(
+                `Somethin went wrong with unlink file ${file.filename}`,
+              ),
+          );
+
+          this._itemRepo
+            .create({
+              imageUrl: cloudinaryResponse.url,
+              name,
+              price,
+              stock,
+              userID,
+            })
+            .then((result) =>
+              resolve({
+                status: HttpStatus.OK,
+                message: 'item created',
+                item: {
+                  name,
+                  imageUrl: cloudinaryResponse.url,
+                  price,
+                  stock,
+                  id: result.insertId,
+                },
+              }),
+            );
+        }),
     );
   }
 
