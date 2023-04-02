@@ -8,20 +8,27 @@ import {
   Param,
   Delete,
   Headers,
-  Controller,
-  ParseIntPipe,
-  ParseArrayPipe,
-  SetMetadata,
   UseGuards,
+  Controller,
+  SetMetadata,
+  UploadedFile,
+  ParseIntPipe,
+  ValidationPipe,
+  ParseArrayPipe,
   UseInterceptors,
 } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
+import { extname } from 'path';
+import { randomUUID } from 'crypto';
+import { diskStorage } from 'multer';
 import { FastifyReply } from 'fastify';
 
 import { CreateItem, UpdateItem, UpdateTags } from '@dto/item';
 import { RoleGuard } from '../guards/role.guard';
 import { ItemService } from '../services/item.service';
 import { GetTokenInterceptor } from '../interceptors/get-token.interceptor';
+import { CreateItemInterceptor } from '../interceptors/create-item.interceptor';
+import { FastifyFileInterceptor } from '../interceptors/fastify-file.interceptor';
 
 @Controller('item')
 export class ItemController {
@@ -91,15 +98,45 @@ export class ItemController {
   @Post('create')
   @SetMetadata('roles', ['basic', 'admin'])
   @UseGuards(RoleGuard)
-  @UseInterceptors(GetTokenInterceptor)
-  create(
+  @UseInterceptors(
+    GetTokenInterceptor,
+    FastifyFileInterceptor('file', {
+      storage: diskStorage({
+        destination: './upload/single',
+        filename(req, file, callback) {
+          callback(
+            null,
+            `${randomUUID()}-${
+              req.body?.name + extname(file.originalname) ||
+              randomUUID() + extname(file.originalname)
+            }`,
+          );
+        },
+      }),
+      fileFilter(req, file, callback) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/))
+          return callback(Error('only images'));
+        return callback(null, true);
+      },
+    }),
+    CreateItemInterceptor,
+  )
+  async create(
     @Headers('user_id') userID: string,
-    @Body() createBody: CreateItem,
+    @UploadedFile() file: Express.Multer.File,
+    @Body(new ValidationPipe()) createBody: CreateItem,
     @Res() res: FastifyReply,
   ) {
-    const { name, imageUrl, price, stock } = createBody;
+    const { name, price, stock } = createBody;
+
     this._itemService
-      .create({ imageUrl, name, price, stock, userID: +userID })
+      .create({
+        file,
+        name,
+        price,
+        stock,
+        userID: +userID,
+      })
       .then((response) => res.status(response.status).send(response));
   }
 
