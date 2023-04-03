@@ -75,10 +75,12 @@ export class ItemService {
       message: string;
       item: RequiredEntityData<ItemModel>;
     }>((resolve, reject) => {
-      if (!file)
+      if (!file) {
+        const defaultImage: string =
+          'https://res.cloudinary.com/dogjjjeg2/image/upload/v1680563659/default_image/default-image.png';
         this._itemRepo
           .create({
-            imageUrl: 'default-image.jpg',
+            imageUrl: defaultImage,
             name,
             price,
             stock,
@@ -90,14 +92,14 @@ export class ItemService {
               message: 'item created',
               item: {
                 name,
-                imageUrl: 'default-image.jpg',
+                imageUrl: defaultImage,
                 price,
                 stock,
                 id: result.insertId,
               },
             }),
           );
-      else
+      } else
         this._cloudinaryService
           .upload(
             file.path,
