@@ -74,45 +74,67 @@ export class ItemService {
       status: number;
       message: string;
       item: RequiredEntityData<ItemModel>;
-    }>((resolve, reject) =>
-      this._cloudinaryService
-        .upload(
-          file.path,
-          `product_${name.toLowerCase().replace(' ', '-')}`,
-          file.filename,
-        )
-        .then((cloudinaryResponse) => {
-          unlink(
-            file.path,
-            (error) =>
-              new Error(
-                `Somethin went wrong with unlink file ${file.filename}`,
-              ),
+    }>((resolve, reject) => {
+      if (!file)
+        this._itemRepo
+          .create({
+            imageUrl: 'default-image.jpg',
+            name,
+            price,
+            stock,
+            userID,
+          })
+          .then((result) =>
+            resolve({
+              status: HttpStatus.OK,
+              message: 'item created',
+              item: {
+                name,
+                imageUrl: 'default-image.jpg',
+                price,
+                stock,
+                id: result.insertId,
+              },
+            }),
           );
-
-          this._itemRepo
-            .create({
-              imageUrl: cloudinaryResponse.url,
-              name,
-              price,
-              stock,
-              userID,
-            })
-            .then((result) =>
-              resolve({
-                status: HttpStatus.OK,
-                message: 'item created',
-                item: {
-                  name,
-                  imageUrl: cloudinaryResponse.url,
-                  price,
-                  stock,
-                  id: result.insertId,
-                },
-              }),
+      else
+        this._cloudinaryService
+          .upload(
+            file.path,
+            `product_${name.toLowerCase().replace(' ', '-')}`,
+            file.filename,
+          )
+          .then((cloudinaryResponse) => {
+            unlink(
+              file.path,
+              (error) =>
+                new Error(
+                  `Somethin went wrong with unlink file ${file.filename}`,
+                ),
             );
-        }),
-    );
+            this._itemRepo
+              .create({
+                imageUrl: cloudinaryResponse.url,
+                name,
+                price,
+                stock,
+                userID,
+              })
+              .then((result) =>
+                resolve({
+                  status: HttpStatus.OK,
+                  message: 'item created',
+                  item: {
+                    name,
+                    imageUrl: cloudinaryResponse.url,
+                    price,
+                    stock,
+                    id: result.insertId,
+                  },
+                }),
+              );
+          });
+    });
   }
 
   update(params: {
