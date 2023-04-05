@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { QueryResult, RequiredEntityData } from '@mikro-orm/core';
 import { unlink } from 'fs';
@@ -12,6 +13,7 @@ export class ItemService {
   constructor(
     private _tagRepo: TagRepoService,
     private _itemRepo: ItemRepoService,
+    private _configService: ConfigService,
     private _historicRepo: HistoricRepoService,
     private _cloudinaryService: CloudinaryService,
   ) {}
@@ -77,7 +79,7 @@ export class ItemService {
     }>((resolve, reject) => {
       if (!file) {
         const defaultImage: string =
-          'https://res.cloudinary.com/dogjjjeg2/image/upload/v1680563659/default_image/default-image.png';
+          this._configService.get<string>('ITEM_DEFAULT_IMAGE');
         this._itemRepo
           .create({
             imageUrl: defaultImage,
