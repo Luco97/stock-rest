@@ -5,31 +5,14 @@
       "id": {
         "name": "id",
         "reference": "scalar",
-        "primary": true,
+        "getter": false,
+        "setter": false,
         "type": "number",
         "array": false
       },
       "email": {
         "name": "email",
         "reference": "scalar",
-        "lazy": true,
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false
-      },
-      "username": {
-        "name": "username",
-        "reference": "scalar",
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false
-      },
-      "password": {
-        "name": "password",
-        "reference": "scalar",
-        "lazy": true,
         "getter": false,
         "setter": false,
         "type": "string",
@@ -38,17 +21,17 @@
       "type": {
         "name": "type",
         "reference": "scalar",
-        "enum": true,
-        "items": ["admin", "basic", "master"],
-        "lazy": true,
+        "getter": false,
+        "setter": false,
         "type": "string",
         "array": false
       },
-      "items": {
-        "name": "items",
-        "reference": "1:m",
-        "cascade": ["persist"],
-        "type": "ItemModel",
+      "itemCount": {
+        "name": "itemCount",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "number",
         "array": false
       }
     },
@@ -56,31 +39,14 @@
       {
         "name": "id",
         "reference": "scalar",
-        "primary": true,
+        "getter": false,
+        "setter": false,
         "type": "number",
         "array": false
       },
       {
         "name": "email",
         "reference": "scalar",
-        "lazy": true,
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false
-      },
-      {
-        "name": "username",
-        "reference": "scalar",
-        "getter": false,
-        "setter": false,
-        "type": "string",
-        "array": false
-      },
-      {
-        "name": "password",
-        "reference": "scalar",
-        "lazy": true,
         "getter": false,
         "setter": false,
         "type": "string",
@@ -89,47 +55,39 @@
       {
         "name": "type",
         "reference": "scalar",
-        "enum": true,
-        "items": ["admin", "basic", "master"],
-        "lazy": true,
+        "getter": false,
+        "setter": false,
         "type": "string",
         "array": false
       },
       {
-        "name": "items",
-        "reference": "1:m",
-        "cascade": ["persist"],
-        "type": "ItemModel",
+        "name": "itemCount",
+        "reference": "scalar",
+        "getter": false,
+        "setter": false,
+        "type": "number",
         "array": false
       }
     ],
-    "primaryKeys": ["id"],
+    "primaryKeys": [],
     "filters": {},
-    "hooks": { "beforeCreate": ["hashPass"] },
+    "hooks": {},
     "indexes": [],
     "uniques": [],
     "checks": [],
     "concurrencyCheckKeys": {},
-    "className": "UserModel",
+    "className": "UserItemsCount",
     "path": "./dist/models/user/user-model.js",
-    "name": "UserModel",
+    "virtual": true,
+    "name": "UserItemsCount",
     "abstract": false,
     "constructorParams": [],
     "toJsonParams": [],
     "useCache": true,
-    "compositePK": false,
-    "relations": [
-      {
-        "name": "items",
-        "reference": "1:m",
-        "cascade": ["persist"],
-        "type": "ItemModel",
-        "array": false
-      }
-    ],
-    "collection": "user_model"
+    "relations": [],
+    "collection": "user_items_count"
   },
   "origin": "./dist/models/user/user-model.js",
-  "hash": "cb52b77da93f4ae55a4c2c1f42a35baa",
+  "hash": "3c65c0f9079bfd24a41f8575e5f32e46",
   "version": "5.6.9"
 }

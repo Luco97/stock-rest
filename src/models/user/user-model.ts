@@ -1,15 +1,18 @@
 import {
-  Collection,
-  Entity,
-  OneToMany,
-  PrimaryKey,
-  Property,
   Enum,
+  Entity,
+  Property,
+  OneToMany,
+  Collection,
+  QueryOrder,
+  PrimaryKey,
   BeforeCreate,
 } from '@mikro-orm/core';
+import { EntityManager } from '@mikro-orm/postgresql';
 import { genSalt, hash } from 'bcrypt';
-import { ItemModel } from '../item/item-model';
+
 import { UserTypes } from './user.enum';
+import { ItemModel } from '../item/item-model';
 
 @Entity()
 export class UserModel {
@@ -43,4 +46,34 @@ export class UserModel {
       );
     });
   }
+}
+
+@Entity({
+  expression: (em: EntityManager) => {
+    return em
+      .createQueryBuilder(UserModel, 'user')
+      .select([
+        'user.id',
+        'user.email',
+        'user.type',
+        'COUNT(items.id) as item_count',
+      ])
+      .leftJoin('user.items', 'items')
+      .groupBy('user.id')
+      .orderBy({ id: QueryOrder.ASC });
+  },
+  virtual: true,
+})
+export class UserItemsCount {
+  @Property()
+  id!: number;
+
+  @Property()
+  email!: string;
+
+  @Property()
+  type!: string;
+
+  @Property()
+  itemCount!: number;
 }
