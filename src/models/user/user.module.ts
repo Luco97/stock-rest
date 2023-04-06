@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { UserRepoService } from './user-repo.service';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-import { UserModel } from './user-model';
+import { UserItemsCount, UserModel } from './user-model';
 
 @Module({
-  imports: [MikroOrmModule.forFeature({ entities: [UserModel] })],
+  imports: [
+    MikroOrmModule.forFeature({ entities: [UserModel, UserItemsCount] }),
+  ],
   exports: [UserRepoService],
   providers: [UserRepoService],
 })
