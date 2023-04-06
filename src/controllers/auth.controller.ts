@@ -1,16 +1,20 @@
 import {
   Res,
+  Get,
+  Query,
   Post,
   Body,
   Param,
   Headers,
   HttpStatus,
   Controller,
+  SetMetadata,
 } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 
 import { Register, SignIn } from '@dto/auth';
 import { UserService } from '../services/user.service';
+import { AlphanumericPipe } from '@shared/pipes';
 
 @Controller('auth')
 export class AuthController {
@@ -49,5 +53,22 @@ export class AuthController {
       message: isValid ? 'user valid' : 'GTFO',
       valid: isValid,
     });
+  }
+
+  @Get()
+  @SetMetadata('roles', ['mod', 'master'])
+  findAll(
+    @Query('take') take: string,
+    @Query('skip') skip: string,
+    @Query('term', AlphanumericPipe) term: string,
+    @Res() res: FastifyReply,
+  ) {
+    this._userService
+      .findAll({ skip: +skip, take: +take, term })
+      .then(([users, count]) =>
+        res
+          .status(HttpStatus.OK)
+          .send({ users, count, message: `users found: ${count}` }),
+      );
   }
 }

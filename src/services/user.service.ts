@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { compare } from 'bcrypt';
 
 import { AuthService } from '@shared/auth';
-import { UserRepoService } from '@models/user';
+import { UserItemsCount, UserRepoService } from '@models/user';
 
 @Injectable()
 export class UserService {
@@ -67,5 +67,19 @@ export class UserService {
 
   validateToken(token: string, type?: string): boolean {
     return this._authService.validateToken(token, type);
+  }
+
+  findAll(params: {
+    take: number;
+    skip: number;
+    term: string;
+  }): Promise<[UserItemsCount[], number]> {
+    const { skip, take, term } = params;
+
+    return this._userRepo.findAll({
+      take: take || 10,
+      skip: skip || 0,
+      username: term,
+    });
   }
 }
