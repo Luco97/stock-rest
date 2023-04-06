@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
-import { UserModel } from './user-model';
+import { UserItemsCount, UserModel } from './user-model';
 import { UserTypes } from './user.enum';
+import { QueryOrder } from '@mikro-orm/core';
 
 @Injectable()
 export class UserRepoService {
   constructor(
     @InjectRepository(UserModel)
     private readonly _userRepo: EntityRepository<UserModel>,
+    @InjectRepository(UserItemsCount)
+    private readonly _userItemCountRepo: EntityRepository<UserItemsCount>,
   ) {}
 
   countRoles(params: { userID: number; roles: string[] }): Promise<number> {
@@ -54,5 +57,34 @@ export class UserRepoService {
         ],
       })
       .getSingleResult();
+  }
+
+  update() {}
+
+  // findAll para todos los usuarios, solo master no es considerado
+  // master puede dar rol de mod y admin
+  // mod puede dar rol de admin
+  // admin es admin pero puede ver todo
+  // basicos = SIGMA
+  findAll(params: {
+    take: number;
+    skip: number;
+    username: string;
+  }): Promise<[UserItemsCount[], number]> {
+    const { skip, take, username } = params;
+    // Para agregar select en entidad principal (no virtual) utilizar .execute()
+    return this._userItemCountRepo.findAndCount(
+      {
+        $and: [
+          { type: { $ne: 'master' } },
+          { username: { $ilike: `${username}%` } },
+        ],
+      },
+      {
+        offset: skip * take || 0,
+        limit: take,
+        orderBy: { id: QueryOrder.ASC },
+      },
+    );
   }
 }
