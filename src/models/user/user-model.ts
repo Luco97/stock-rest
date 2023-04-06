@@ -54,6 +54,7 @@ export class UserModel {
       .createQueryBuilder(UserModel, 'user')
       .select([
         'user.id',
+        'user.username',
         'user.email',
         'user.type',
         'COUNT(items.id) as item_count',
@@ -68,8 +69,11 @@ export class UserItemsCount {
   @Property()
   id!: number;
 
-  @Property()
+  @Property({ lazy: true })
   email!: string;
+
+  @Property()
+  username!: string;
 
   @Property()
   type!: string;

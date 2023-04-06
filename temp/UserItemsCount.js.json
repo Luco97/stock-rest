@@ -88,6 +88,6 @@
     "collection": "user_items_count"
   },
   "origin": "./dist/models/user/user-model.js",
-  "hash": "3c65c0f9079bfd24a41f8575e5f32e46",
+  "hash": "cb52b77da93f4ae55a4c2c1f42a35baa",
   "version": "5.6.9"
 }
