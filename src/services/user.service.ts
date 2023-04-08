@@ -33,33 +33,74 @@ export class UserService {
 
   signIn(params: {
     email: string;
+    username?: string;
     password: string;
-  }): Promise<{ status: number; message: string; token?: string }> {
-    const { email, password } = params;
+    resetPass?: boolean;
+  }): Promise<{
+    status: number;
+    message: string;
+    token?: string;
+    valid?: boolean;
+    updatePassToken?: string;
+  }> {
+    const { email, password, username, resetPass } = params;
 
-    return new Promise<{ status: number; message: string; token?: string }>(
-      (resolve, reject) =>
-        this._userRepo.findUser({ email, username: ' ' }).then((user) => {
+    return new Promise<{
+      status: number;
+      message: string;
+      token?: string;
+      valid?: boolean;
+      updatePassToken?: string;
+    }>((resolve, reject) =>
+      this._userRepo
+        .findUser({ email, username: username || '' })
+        .then((user) => {
           if (!user)
             resolve({ status: HttpStatus.OK, message: `user doesn't exist` });
           else {
-            compare(password, user.password).then((isValid) => {
-              if (!isValid)
-                resolve({
-                  status: HttpStatus.OK,
-                  message: `user doesn't exist`,
-                });
-              else
-                resolve({
-                  status: HttpStatus.OK,
-                  message: 'user logged',
-                  token: this._authService.genJWT({
+            if (resetPass)
+              resolve({
+                status: HttpStatus.OK,
+                message: 'user logged',
+                valid: true,
+                updatePassToken: this._authService.genJWT(
+                  {
                     id: user.id,
                     name: user.username,
-                    type: user.type,
-                  }),
-                });
-            });
+                    type: 'PASS_UPDATE',
+                  },
+                  { expiresIn: '3h' },
+                ),
+              });
+            else
+              compare(password, user.password).then((isValid) => {
+                if (!isValid)
+                  resolve({
+                    status: HttpStatus.OK,
+                    message: `user doesn't exist`,
+                    valid: isValid,
+                  });
+                else {
+                  resolve({
+                    status: HttpStatus.OK,
+                    message: 'user logged',
+                    token: this._authService.genJWT({
+                      id: user.id,
+                      name: user.username,
+                      type: user.type,
+                    }),
+                    valid: isValid,
+                    updatePassToken: this._authService.genJWT(
+                      {
+                        id: user.id,
+                        name: user.username,
+                        type: 'PASS_UPDATE',
+                      },
+                      { expiresIn: '3h' },
+                    ),
+                  });
+                }
+              });
           }
         }),
     );
@@ -81,5 +122,23 @@ export class UserService {
       skip: skip || 0,
       username: term,
     });
+  }
+
+  updatePassword(params: {
+    user_id: number;
+    updatePassToken: string;
+    newPassword: string;
+  }): Promise<number> {
+    const { newPassword, user_id, updatePassToken } = params;
+
+    const { id, type } = this._authService.getContext(updatePassToken);
+
+    // No es token para update de password
+    if (type != 'PASS_UPDATE')
+      return new Promise<number>((resolve) => resolve(0));
+    // usuario que pasa el guardia no utiliza mismo token para crear
+    // nueva contraseña (juanito no puede cambiarle la contraseña a pedrito)
+    if (user_id != id) return new Promise<number>((resolve) => resolve(0));
+    return this._userRepo.update(user_id, newPassword);
   }
 }
