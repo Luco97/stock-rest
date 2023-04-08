@@ -35,13 +35,17 @@ export class UserModel {
   items: Collection<ItemModel> = new Collection<ItemModel>(this);
 
   @BeforeCreate()
-  async hashPass() {
-    if (!this.password) return;
+  async hashPass(pass?: string) {
+    if (!(this.password || pass)) return;
     const saltRound: number = 10;
-    return new Promise((resolve, reject) => {
+    const newPassword = pass || this.password;
+    return new Promise<string>((resolve, reject) => {
       genSalt(saltRound).then((bcSaltRound) =>
-        hash(this.password, bcSaltRound)
-          .then((hashPass) => resolve((this.password = hashPass)))
+        hash(newPassword, bcSaltRound)
+          .then((hashPass) => {
+            if (!pass) this.password = hashPass;
+            resolve(hashPass);
+          })
           .catch((error) => reject(error)),
       );
     });

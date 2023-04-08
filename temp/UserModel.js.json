@@ -39,7 +39,7 @@
         "name": "type",
         "reference": "scalar",
         "enum": true,
-        "items": ["admin", "basic", "master"],
+        "items": ["admin", "basic", "mod", "master"],
         "lazy": true,
         "type": "string",
         "array": false
@@ -90,7 +90,7 @@
         "name": "type",
         "reference": "scalar",
         "enum": true,
-        "items": ["admin", "basic", "master"],
+        "items": ["admin", "basic", "mod", "master"],
         "lazy": true,
         "type": "string",
         "array": false
@@ -130,6 +130,6 @@
     "collection": "user_model"
   },
   "origin": "./dist/models/user/user-model.js",
-  "hash": "cb52b77da93f4ae55a4c2c1f42a35baa",
+  "hash": "36aee36d7ad0c9b394cae693d7117548",
   "version": "5.6.9"
 }
