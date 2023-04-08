@@ -1,4 +1,4 @@
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 import { PayloadInterface } from '../interface/payload.interface';
 
@@ -6,16 +6,22 @@ import { PayloadInterface } from '../interface/payload.interface';
 export class AuthService {
   constructor(private _jwtService: JwtService) {}
 
-  genJWT(object: { id: number; name: string; type: string }): string {
+  genJWT(
+    object: { id: number; name: string; type: string },
+    options?: JwtSignOptions,
+  ): string {
     const { id, name, type } = object;
-    return this._jwtService.sign({
-      sub: name,
-      context: {
-        username: name,
-        extra: id,
-        type,
+    return this._jwtService.sign(
+      {
+        sub: name,
+        context: {
+          username: name,
+          extra: id,
+          type,
+        },
       },
-    });
+      options,
+    );
   }
 
   verify(token: string): PayloadInterface {
