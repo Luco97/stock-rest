@@ -1,20 +1,25 @@
 import {
   Res,
   Get,
-  Query,
   Post,
   Body,
   Param,
+  Query,
   Headers,
+  UseGuards,
   HttpStatus,
   Controller,
   SetMetadata,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 
 import { Register, SignIn } from '@dto/auth';
 import { UserService } from '../services/user.service';
 import { AlphanumericPipe } from '@shared/pipes';
+import { GetTokenInterceptor } from '../interceptors/get-token.interceptor';
+import { RoleGuard } from '../guards/role.guard';
+import { Update } from '@dto/auth/update.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -38,7 +43,9 @@ export class AuthController {
 
     this._userService
       .signIn({ email, password })
-      .then((response) => res.status(response.status).send(response));
+      .then(({ message, status, token }) =>
+        res.status(status).send({ status, message, token }),
+      );
   }
 
   @Post(['validate-token', 'validate-token/:type'])
@@ -55,7 +62,66 @@ export class AuthController {
     });
   }
 
-  @Get()
+  @Post('reset-pass')
+  @SetMetadata('roles', ['basic', 'admin', 'mod', 'master'])
+  @UseGuards(RoleGuard)
+  @UseInterceptors(GetTokenInterceptor)
+  update(
+    @Headers('user_id') user_id: string,
+    @Param('updatePassToken') updatePassToken: string,
+    @Body() updateBody: Update,
+    @Res() res: FastifyReply,
+  ) {
+    // const isValid: boolean = this._userService.validateToken(token, type);
+    const { password } = updateBody;
+
+    this._userService
+      .updatePassword({
+        user_id: +user_id,
+        newPassword: password,
+        updatePassToken,
+      })
+      .then((value) =>
+        res.status(HttpStatus.OK).send({
+          status: HttpStatus.OK,
+          message: value ? 'user pass reset' : 'GTFO',
+          // valid: isValid,
+        }),
+      );
+  }
+
+  @Post('confirm-pass')
+  @SetMetadata('roles', ['basic', 'admin', 'mod', 'master'])
+  @UseGuards(RoleGuard)
+  @UseInterceptors(GetTokenInterceptor)
+  confirmPass(
+    @Headers('user_name') username: string,
+    @Body() updateBody: Update,
+    @Res() res: FastifyReply,
+  ) {
+    const { password, email } = updateBody;
+
+    if (!password || !email)
+      res.status(HttpStatus.OK).send({
+        status: HttpStatus.OK,
+        message: 'this is anyone, we say he can but probably is any asshole',
+      });
+    else
+      this._userService
+        .signIn({ email, password, username, resetPass: true })
+        .then(({ status, valid, updatePassToken }) =>
+          res.status(status).send({
+            status,
+            message: valid
+              ? 'valid to reset password (imagine it come from mail)'
+              : 'valid to reset password (this is anyone, we say he can but probably is any asshole)',
+            valid,
+            updatePassToken,
+          }),
+        );
+  }
+
+  @Get(['', 'list'])
   @SetMetadata('roles', ['mod', 'master'])
   findAll(
     @Query('take') take: string,
