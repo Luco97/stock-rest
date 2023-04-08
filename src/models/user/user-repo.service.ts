@@ -59,7 +59,17 @@ export class UserRepoService {
       .getSingleResult();
   }
 
-  update() {}
+  async update(user_id: number, password: string) {
+    return new Promise<number>((resolve, reject) =>
+      new UserModel()
+        .hashPass(password)
+        .then((newHashPass) =>
+          this._userRepo
+            .nativeUpdate({ id: user_id }, { password: newHashPass })
+            .then((value) => resolve(value)),
+        ),
+    );
+  }
 
   // findAll para todos los usuarios, solo master no es considerado
   // master puede dar rol de mod y admin
