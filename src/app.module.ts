@@ -59,6 +59,10 @@ export class AppModule implements NestModule, OnModuleInit {
     consumer
       .apply(BearerTokenMiddleware)
       .forRoutes(
+        { path: 'auth/*', method: RequestMethod.PUT },
+        { path: 'auth/*', method: RequestMethod.GET },
+        { path: 'auth/reset-pass', method: RequestMethod.POST },
+        { path: 'auth/confirm-pass', method: RequestMethod.POST },
         { path: 'auth/validate-token', method: RequestMethod.POST },
         TagController,
         ItemController,
