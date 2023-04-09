@@ -93,11 +93,11 @@ export class ItemService {
               status: HttpStatus.OK,
               message: 'item created',
               item: {
+                id: result.insertId,
                 name,
                 imageUrl: defaultImage,
                 price,
                 stock,
-                id: result.insertId,
               },
             }),
           );
@@ -129,11 +129,11 @@ export class ItemService {
                   status: HttpStatus.OK,
                   message: 'item created',
                   item: {
+                    id: result.insertId,
                     name,
                     imageUrl: cloudinaryResponse.url,
                     price,
                     stock,
-                    id: result.insertId,
                   },
                 }),
               );
