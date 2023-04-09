@@ -59,7 +59,7 @@ export class UserRepoService {
       .getSingleResult();
   }
 
-  async update(user_id: number, password: string) {
+  updatePass(user_id: number, password: string): Promise<number> {
     return new Promise<number>((resolve, reject) =>
       new UserModel()
         .hashPass(password)
@@ -69,6 +69,10 @@ export class UserRepoService {
             .then((value) => resolve(value)),
         ),
     );
+  }
+
+  updateType(user_id: number, type: string): Promise<number> {
+    return this._userRepo.nativeUpdate({ id: user_id }, { type });
   }
 
   // findAll para todos los usuarios, solo master no es considerado
