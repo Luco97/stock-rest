@@ -1,4 +1,5 @@
 import {
+  Put,
   Res,
   Get,
   Post,
@@ -10,6 +11,8 @@ import {
   HttpStatus,
   Controller,
   SetMetadata,
+  ParseIntPipe,
+  ParseEnumPipe,
   UseInterceptors,
 } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
@@ -20,6 +23,7 @@ import { AlphanumericPipe } from '@shared/pipes';
 import { GetTokenInterceptor } from '../interceptors/get-token.interceptor';
 import { RoleGuard } from '../guards/role.guard';
 import { Update } from '@dto/auth/update.dto';
+import { UserTypes, UserTypesOptionsEnum } from '@models/user';
 
 @Controller('auth')
 export class AuthController {
@@ -48,6 +52,7 @@ export class AuthController {
       );
   }
 
+  // work also for password reset type = 'PASS_UPDATE'
   @Post(['validate-token', 'validate-token/:type'])
   validateToken(
     @Headers('Authorization') token: string,
@@ -123,6 +128,7 @@ export class AuthController {
 
   @Get(['', 'list'])
   @SetMetadata('roles', ['mod', 'master'])
+  @UseGuards(RoleGuard)
   findAll(
     @Query('take') take: string,
     @Query('skip') skip: string,
@@ -135,6 +141,34 @@ export class AuthController {
         res
           .status(HttpStatus.OK)
           .send({ users, count, message: `users found: ${count}` }),
+      );
+  }
+
+  @Put(':id/update/:type')
+  @SetMetadata('roles', ['mod', 'master'])
+  @UseGuards(RoleGuard)
+  @UseInterceptors(GetTokenInterceptor)
+  updateType(
+    @Headers('user_type') userType: string,
+    @Param('id', ParseIntPipe) id: number,
+    @Param('type', new ParseEnumPipe(UserTypesOptionsEnum))
+    type: string,
+    @Res() res: FastifyReply,
+  ) {
+    // master hace la wea que quiera
+    if (
+      userType == 'mod' &&
+      ![UserTypes.ADMIN.toString(), UserTypes.BASIC.toString()].includes(type)
+    )
+      return res
+        .status(HttpStatus.NOT_ACCEPTABLE)
+        .send({ status: HttpStatus.NOT_ACCEPTABLE, message: 'not valid' });
+    return this._userService
+      .updateType({ user_id: id, type })
+      .then((hurtRows) =>
+        res
+          .status(HttpStatus.OK)
+          .send({ status: HttpStatus.OK, message: hurtRows ? '' : '' }),
       );
   }
 }
