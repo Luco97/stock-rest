@@ -139,6 +139,12 @@ export class UserService {
     // usuario que pasa el guardia no utiliza mismo token para crear
     // nueva contraseña (juanito no puede cambiarle la contraseña a pedrito)
     if (user_id != id) return new Promise<number>((resolve) => resolve(0));
-    return this._userRepo.update(user_id, newPassword);
+    return this._userRepo.updatePass(user_id, newPassword);
+  }
+
+  updateType(params: { user_id: number; type: string }) {
+    const { type, user_id } = params;
+
+    return this._userRepo.updateType(user_id, type);
   }
 }
