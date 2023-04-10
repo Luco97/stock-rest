@@ -36,7 +36,7 @@ export class AuthController {
     const { email, password, username } = register_user;
     this._userService.register({ email, password, username }).then((isValid) =>
       res.status(HttpStatus.OK).send({
-        status: HttpStatus.OK,
+        statusCode: HttpStatus.OK,
         message: isValid ? 'user created' : 'already exist',
       }),
     );
@@ -47,8 +47,8 @@ export class AuthController {
 
     this._userService
       .signIn({ email, password })
-      .then(({ message, status, token }) =>
-        res.status(status).send({ status, message, token }),
+      .then(({ message, statusCode, token }) =>
+        res.status(statusCode).send({ statusCode, message, token }),
       );
   }
 
@@ -61,7 +61,7 @@ export class AuthController {
   ) {
     const isValid: boolean = this._userService.validateToken(token, type);
     res.status(HttpStatus.OK).send({
-      status: HttpStatus.OK,
+      statusCode: HttpStatus.OK,
       message: isValid ? 'user valid' : 'GTFO',
       valid: isValid,
     });
@@ -88,7 +88,7 @@ export class AuthController {
       })
       .then((value) =>
         res.status(HttpStatus.OK).send({
-          status: HttpStatus.OK,
+          statusCode: HttpStatus.OK,
           message: value ? 'user pass reset' : 'GTFO',
           // valid: isValid,
         }),
@@ -108,15 +108,15 @@ export class AuthController {
 
     if (!password || !email)
       res.status(HttpStatus.OK).send({
-        status: HttpStatus.OK,
+        statusCode: HttpStatus.OK,
         message: 'this is anyone, we say he can but probably is any asshole',
       });
     else
       this._userService
         .signIn({ email, password, username, resetPass: true })
-        .then(({ status, valid, updatePassToken }) =>
-          res.status(status).send({
-            status,
+        .then(({ statusCode, valid, updatePassToken }) =>
+          res.status(statusCode).send({
+            statusCode,
             message: valid
               ? 'valid to reset password (imagine it come from mail)'
               : 'valid to reset password (this is anyone, we say he can but probably is any asshole)',
@@ -162,13 +162,13 @@ export class AuthController {
     )
       return res
         .status(HttpStatus.NOT_ACCEPTABLE)
-        .send({ status: HttpStatus.NOT_ACCEPTABLE, message: 'not valid' });
+        .send({ statusCode: HttpStatus.NOT_ACCEPTABLE, message: 'not valid' });
     return this._userService
       .updateType({ user_id: id, type })
       .then((hurtRows) =>
         res
           .status(HttpStatus.OK)
-          .send({ status: HttpStatus.OK, message: hurtRows ? '' : '' }),
+          .send({ statusCode: HttpStatus.OK, message: hurtRows ? '' : '' }),
       );
   }
 }

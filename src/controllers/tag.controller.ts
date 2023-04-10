@@ -50,7 +50,7 @@ export class TagController {
       .then((newTag) =>
         res
           .status(HttpStatus.OK)
-          .send({ status: HttpStatus.OK, message: 'tag created', tag: newTag }),
+          .send({ statusCode: HttpStatus.OK, message: 'tag created', tag: newTag }),
       );
   }
 
@@ -66,6 +66,6 @@ export class TagController {
 
     this._tagService
       .update(tagID, description)
-      .then((response) => res.status(response.status).send(response));
+      .then((response) => res.status(response.statusCode).send(response));
   }
 }

@@ -70,7 +70,7 @@ export class ItemController {
       .then(([items, count]) =>
         res
           .status(HttpStatus.OK)
-          .send({ items, count, status: HttpStatus.OK, message: 'All items' }),
+          .send({ items, count, statusCode: HttpStatus.OK, message: 'All items' }),
       );
   }
 
@@ -89,7 +89,7 @@ export class ItemController {
       .then((item) => {
         res.send({
           item,
-          status: HttpStatus.OK,
+          statusCode: HttpStatus.OK,
           message: 'All items',
         });
       });
@@ -137,7 +137,7 @@ export class ItemController {
         stock,
         userID: +userID,
       })
-      .then((response) => res.status(response.status).send(response));
+      .then((response) => res.status(response.statusCode).send(response));
   }
 
   @Put(':itemID/update')
@@ -162,7 +162,7 @@ export class ItemController {
         userID: +userID,
         userType,
       })
-      .then((response) => res.status(response.status).send(response));
+      .then((response) => res.status(response.statusCode).send(response));
   }
 
   @Delete(':itemID/delete')
@@ -205,7 +205,7 @@ export class ItemController {
       })
       .then(([changes, count]) =>
         res.status(HttpStatus.OK).send({
-          status: HttpStatus.OK,
+          statusCode: HttpStatus.OK,
           message: `All changes from item with id = ${itemID}`,
           changes,
           count,
@@ -233,7 +233,7 @@ export class ItemController {
         userID: +userID,
         userType,
       })
-      .then((response) => res.status(response.status).send(response));
+      .then((response) => res.status(response.statusCode).send(response));
   }
 
   @Get(':itemID/related-items')
@@ -263,6 +263,6 @@ export class ItemController {
         userID: +userID,
         userType,
       })
-      .then((response) => res.status(response.status).send(response));
+      .then((response) => res.status(response.statusCode).send(response));
   }
 }
