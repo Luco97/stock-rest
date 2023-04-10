@@ -37,7 +37,7 @@ export class UserService {
     password: string;
     resetPass?: boolean;
   }): Promise<{
-    status: number;
+    statusCode: number;
     message: string;
     token?: string;
     valid?: boolean;
@@ -46,7 +46,7 @@ export class UserService {
     const { email, password, username, resetPass } = params;
 
     return new Promise<{
-      status: number;
+      statusCode: number;
       message: string;
       token?: string;
       valid?: boolean;
@@ -56,11 +56,11 @@ export class UserService {
         .findUser({ email, username: username || '' })
         .then((user) => {
           if (!user)
-            resolve({ status: HttpStatus.OK, message: `user doesn't exist` });
+            resolve({ statusCode: HttpStatus.OK, message: `user doesn't exist` });
           else {
             if (resetPass)
               resolve({
-                status: HttpStatus.OK,
+                statusCode: HttpStatus.OK,
                 message: 'user logged',
                 valid: true,
                 updatePassToken: this._authService.genJWT(
@@ -76,13 +76,13 @@ export class UserService {
               compare(password, user.password).then((isValid) => {
                 if (!isValid)
                   resolve({
-                    status: HttpStatus.OK,
+                    statusCode: HttpStatus.OK,
                     message: `user doesn't exist`,
                     valid: isValid,
                   });
                 else {
                   resolve({
-                    status: HttpStatus.OK,
+                    statusCode: HttpStatus.OK,
                     message: 'user logged',
                     token: this._authService.genJWT({
                       id: user.id,

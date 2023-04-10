@@ -29,16 +29,16 @@ export class TagService {
   update(
     tagID: number,
     description: string,
-  ): Promise<{ status: number; message: string; tag?: TagModel }> {
-    return new Promise<{ status: number; message: string; tag?: TagModel }>(
+  ): Promise<{ statusCode: number; message: string; tag?: TagModel }> {
+    return new Promise<{ statusCode: number; message: string; tag?: TagModel }>(
       (resolve, reject) =>
         this._tagRepo.findAllByID([tagID]).then(([tag]) => {
           if (!tag)
-            resolve({ status: HttpStatus.OK, message: 'no tag with that id' });
+            resolve({ statusCode: HttpStatus.OK, message: 'no tag with that id' });
           else
             this._tagRepo.update(description, tag).then((newTag) =>
               resolve({
-                status: HttpStatus.OK,
+                statusCode: HttpStatus.OK,
                 message: `tag with id = ${newTag.id} updated`,
                 tag: newTag,
               }),

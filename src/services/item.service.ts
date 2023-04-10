@@ -66,14 +66,14 @@ export class ItemService {
     stock: number;
     userID: number;
   }): Promise<{
-    status: number;
+    statusCode: number;
     message: string;
     item: RequiredEntityData<ItemModel>;
   }> {
     const { file, name, price, stock, userID } = params;
 
     return new Promise<{
-      status: number;
+      statusCode: number;
       message: string;
       item: RequiredEntityData<ItemModel>;
     }>((resolve, reject) => {
@@ -90,7 +90,7 @@ export class ItemService {
           })
           .then((result) =>
             resolve({
-              status: HttpStatus.OK,
+              statusCode: HttpStatus.OK,
               message: 'item created',
               item: {
                 id: result.insertId,
@@ -126,7 +126,7 @@ export class ItemService {
               })
               .then((result) =>
                 resolve({
-                  status: HttpStatus.OK,
+                  statusCode: HttpStatus.OK,
                   message: 'item created',
                   item: {
                     id: result.insertId,
@@ -149,17 +149,17 @@ export class ItemService {
     userID: number;
     userType: string;
     itemID: number;
-  }): Promise<{ status: number; message: string; item?: ItemModel }> {
+  }): Promise<{ statusCode: number; message: string; item?: ItemModel }> {
     const { imageUrl, name, price, stock, itemID, userID, userType } = params;
 
-    return new Promise<{ status: number; message: string; item?: ItemModel }>(
+    return new Promise<{ statusCode: number; message: string; item?: ItemModel }>(
       (resolve, reject) =>
         this._itemRepo
           .findOne({ rol: userType, itemID, userID })
           .then((item) => {
             if (!item)
               resolve({
-                status: HttpStatus.OK,
+                statusCode: HttpStatus.OK,
                 message: `no item with id = ${itemID} found`,
               });
             else {
@@ -175,7 +175,7 @@ export class ItemService {
               //   .updateItem({ imageUrl, item, name, price, stock })
               //   .then((updateItem) =>
               //     resolve({
-              //       status: HttpStatus.OK,
+              //       statusCode: HttpStatus.OK,
               //       message: `item with id = ${itemID} updated`,
               //       item: updateItem,
               //     }),
@@ -192,7 +192,7 @@ export class ItemService {
                 ...allChanges,
               ]).then(([updateItem]) =>
                 resolve({
-                  status: HttpStatus.OK,
+                  statusCode: HttpStatus.OK,
                   message: `item with id = ${itemID} updated`,
                   item: updateItem,
                 }),
@@ -242,7 +242,7 @@ export class ItemService {
   }) {
     const { tagIDs, itemID, userID, userType } = params;
 
-    return new Promise<{ status: number; message: string; item?: ItemModel }>(
+    return new Promise<{ statusCode: number; message: string; item?: ItemModel }>(
       (resolve, reject) =>
         Promise.all([
           this._itemRepo.findOne({ itemID, rol: userType, userID }),
@@ -250,13 +250,13 @@ export class ItemService {
         ]).then(([item, tags]) => {
           if (!item)
             resolve({
-              status: HttpStatus.OK,
+              statusCode: HttpStatus.OK,
               message: `no item with id = ${itemID}`,
             });
           else
             this._itemRepo.updateTags({ item, tags }).then(() => {
               resolve({
-                status: HttpStatus.OK,
+                statusCode: HttpStatus.OK,
                 message: `tags ${
                   tags.length ? 'updated' : 'removed'
                 } for item with id = ${itemID}`,
@@ -275,7 +275,7 @@ export class ItemService {
     userID: number;
     userType: string;
   }): Promise<{
-    status: number;
+    statusCode: number;
     message: string;
     items?: ItemModel[];
     count?: number;
@@ -283,7 +283,7 @@ export class ItemService {
     const { itemID, userID, skip, take, order, userType } = params;
 
     return new Promise<{
-      status: number;
+      statusCode: number;
       message: string;
       items?: ItemModel[];
       count?: number;
@@ -291,7 +291,7 @@ export class ItemService {
       this.findOne({ itemID, rol: userType, userID }).then((item) => {
         if (!item.tags.length)
           resolve({
-            status: HttpStatus.OK,
+            statusCode: HttpStatus.OK,
             message: `item doesn't exist`,
             count: 0,
           });
@@ -313,7 +313,7 @@ export class ItemService {
             })
             .then(([items, count]) =>
               resolve({
-                status: HttpStatus.OK,
+                statusCode: HttpStatus.OK,
                 message: `items related to "${item.name}"`,
                 items,
                 count,
