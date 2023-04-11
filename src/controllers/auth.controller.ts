@@ -34,12 +34,17 @@ export class AuthController {
     @Res() res: FastifyReply,
   ) {
     const { email, password, username } = register_user;
-    this._userService.register({ email, password, username }).then((isValid) =>
-      res.status(HttpStatus.OK).send({
-        statusCode: HttpStatus.OK,
-        message: isValid ? 'user created' : 'already exist',
-      }),
-    );
+    this._userService
+      .register({ email, password, username })
+      .then((isValid) => {
+        const statusCode: number = isValid
+          ? HttpStatus.OK
+          : HttpStatus.UNAUTHORIZED;
+        res.status(statusCode).send({
+          statusCode,
+          message: isValid ? 'user created' : 'already exist',
+        });
+      });
   }
 
   @Post('sign-in') signIn(@Body() sign_user: SignIn, @Res() res: FastifyReply) {
@@ -60,8 +65,11 @@ export class AuthController {
     @Res() res: FastifyReply,
   ) {
     const isValid: boolean = this._userService.validateToken(token, type);
-    res.status(HttpStatus.OK).send({
-      statusCode: HttpStatus.OK,
+    const statusCode: number = isValid
+      ? HttpStatus.OK
+      : HttpStatus.UNAUTHORIZED;
+    res.status(statusCode).send({
+      statusCode,
       message: isValid ? 'user valid' : 'GTFO',
       valid: isValid,
     });
@@ -138,9 +146,12 @@ export class AuthController {
     this._userService
       .findAll({ skip: +skip, take: +take, term })
       .then(([users, count]) =>
-        res
-          .status(HttpStatus.OK)
-          .send({ users, count, message: `users found: ${count}` }),
+        res.status(HttpStatus.OK).send({
+          statusCode: HttpStatus.OK,
+          users,
+          count,
+          message: `users found: ${count}`,
+        }),
       );
   }
 
