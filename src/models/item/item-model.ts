@@ -1,12 +1,13 @@
 import {
   Entity,
+  Cascade,
   Property,
+  ArrayType,
   OneToMany,
   ManyToOne,
   Collection,
   ManyToMany,
   PrimaryKey,
-  Cascade,
 } from '@mikro-orm/core';
 
 import { TagModel } from '../tag/tag-model';
@@ -27,8 +28,11 @@ export class ItemModel {
   @Property()
   price: number;
 
-  @Property()
+  @Property({ nullable: true })
   imageUrl: string;
+
+  @Property({ type: ArrayType, nullable: true })
+  imagesArrayUrl?: string[];
 
   @Property()
   createdAt: Date = new Date();
