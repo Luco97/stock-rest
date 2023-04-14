@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { QueryResult, RequiredEntityData } from '@mikro-orm/core';
 import { unlink } from 'fs';
+import { UploadApiResponse } from 'cloudinary';
 
 import { TagRepoService } from '@models/tag';
 import { CloudinaryService } from '@shared/cloudinary';
@@ -60,7 +61,7 @@ export class ItemService {
   }
 
   create(params: {
-    file: Express.Multer.File;
+    files: Express.Multer.File[];
     name: string;
     price: number;
     stock: number;
@@ -70,19 +71,20 @@ export class ItemService {
     message: string;
     item: RequiredEntityData<ItemModel>;
   }> {
-    const { file, name, price, stock, userID } = params;
+    const { files, name, price, stock, userID } = params;
 
     return new Promise<{
       statusCode: number;
       message: string;
       item: RequiredEntityData<ItemModel>;
     }>((resolve, reject) => {
-      if (!file) {
+      if (!files.length) {
         const defaultImage: string =
           this._configService.get<string>('ITEM_DEFAULT_IMAGE');
         this._itemRepo
           .create({
             imageUrl: defaultImage,
+            displayImagesUrl: [defaultImage],
             name,
             price,
             stock,
@@ -101,27 +103,41 @@ export class ItemService {
               },
             }),
           );
-      } else
-        this._cloudinaryService
-          .upload(
+      } else {
+        const uploadImageSet: Promise<UploadApiResponse>[] = files.map((file) =>
+          this._cloudinaryService.upload(
             file.path,
             `product_${name.toLowerCase().replace(' ', '-')}`,
             file.filename,
-          )
+          ),
+        );
+        Promise.all(uploadImageSet)
+          // this._cloudinaryService
+          //   .upload(
+          //     file.path,
+          //     `product_${name.toLowerCase().replace(' ', '-')}`,
+          //     file.filename,
+          //   )
           .then((cloudinaryResponse) => {
-            unlink(
-              file.path,
-              (error) =>
-                new Error(
-                  `Somethin went wrong with unlink file ${file.filename}`,
-                ),
+            files.forEach((file) =>
+              unlink(
+                file.path,
+                (error) =>
+                  new Error(
+                    `Somethin went wrong with unlink file ${file.filename}`,
+                  ),
+              ),
+            );
+            const displayImages: string[] = cloudinaryResponse.map(
+              (images) => images.url,
             );
             this._itemRepo
               .create({
-                imageUrl: cloudinaryResponse.url,
+                imageUrl: displayImages[0],
                 name,
                 price,
                 stock,
+                displayImagesUrl: displayImages,
                 userID,
               })
               .then((result) =>
@@ -131,13 +147,15 @@ export class ItemService {
                   item: {
                     id: result.insertId,
                     name,
-                    imageUrl: cloudinaryResponse.url,
                     price,
                     stock,
+                    imageUrl: displayImages[0],
+                    imagesArrayUrl: displayImages,
                   },
                 }),
               );
           });
+      }
     });
   }
 
@@ -152,53 +170,54 @@ export class ItemService {
   }): Promise<{ statusCode: number; message: string; item?: ItemModel }> {
     const { imageUrl, name, price, stock, itemID, userID, userType } = params;
 
-    return new Promise<{ statusCode: number; message: string; item?: ItemModel }>(
-      (resolve, reject) =>
-        this._itemRepo
-          .findOne({ rol: userType, itemID, userID })
-          .then((item) => {
-            if (!item)
-              resolve({
-                statusCode: HttpStatus.OK,
-                message: `no item with id = ${itemID} found`,
-              });
-            else {
-              const allChanges = this.allChanges({
-                imageUrl,
-                name,
-                price,
-                stock,
-                item,
-              });
+    return new Promise<{
+      statusCode: number;
+      message: string;
+      item?: ItemModel;
+    }>((resolve, reject) =>
+      this._itemRepo.findOne({ rol: userType, itemID, userID }).then((item) => {
+        if (!item)
+          resolve({
+            statusCode: HttpStatus.OK,
+            message: `no item with id = ${itemID} found`,
+          });
+        else {
+          const allChanges = this.allChanges({
+            imageUrl,
+            name,
+            price,
+            stock,
+            item,
+          });
 
-              // this._itemRepo
-              //   .updateItem({ imageUrl, item, name, price, stock })
-              //   .then((updateItem) =>
-              //     resolve({
-              //       statusCode: HttpStatus.OK,
-              //       message: `item with id = ${itemID} updated`,
-              //       item: updateItem,
-              //     }),
-              //   );
+          // this._itemRepo
+          //   .updateItem({ imageUrl, item, name, price, stock })
+          //   .then((updateItem) =>
+          //     resolve({
+          //       statusCode: HttpStatus.OK,
+          //       message: `item with id = ${itemID} updated`,
+          //       item: updateItem,
+          //     }),
+          //   );
 
-              Promise.all([
-                this._itemRepo.updateItem({
-                  imageUrl,
-                  item,
-                  name,
-                  price,
-                  stock,
-                }),
-                ...allChanges,
-              ]).then(([updateItem]) =>
-                resolve({
-                  statusCode: HttpStatus.OK,
-                  message: `item with id = ${itemID} updated`,
-                  item: updateItem,
-                }),
-              );
-            }
-          }),
+          Promise.all([
+            this._itemRepo.updateItem({
+              imageUrl,
+              item,
+              name,
+              price,
+              stock,
+            }),
+            ...allChanges,
+          ]).then(([updateItem]) =>
+            resolve({
+              statusCode: HttpStatus.OK,
+              message: `item with id = ${itemID} updated`,
+              item: updateItem,
+            }),
+          );
+        }
+      }),
     );
   }
 
@@ -242,28 +261,31 @@ export class ItemService {
   }) {
     const { tagIDs, itemID, userID, userType } = params;
 
-    return new Promise<{ statusCode: number; message: string; item?: ItemModel }>(
-      (resolve, reject) =>
-        Promise.all([
-          this._itemRepo.findOne({ itemID, rol: userType, userID }),
-          this._tagRepo.findAllByID(tagIDs),
-        ]).then(([item, tags]) => {
-          if (!item)
+    return new Promise<{
+      statusCode: number;
+      message: string;
+      item?: ItemModel;
+    }>((resolve, reject) =>
+      Promise.all([
+        this._itemRepo.findOne({ itemID, rol: userType, userID }),
+        this._tagRepo.findAllByID(tagIDs),
+      ]).then(([item, tags]) => {
+        if (!item)
+          resolve({
+            statusCode: HttpStatus.OK,
+            message: `no item with id = ${itemID}`,
+          });
+        else
+          this._itemRepo.updateTags({ item, tags }).then(() => {
             resolve({
               statusCode: HttpStatus.OK,
-              message: `no item with id = ${itemID}`,
+              message: `tags ${
+                tags.length ? 'updated' : 'removed'
+              } for item with id = ${itemID}`,
+              item,
             });
-          else
-            this._itemRepo.updateTags({ item, tags }).then(() => {
-              resolve({
-                statusCode: HttpStatus.OK,
-                message: `tags ${
-                  tags.length ? 'updated' : 'removed'
-                } for item with id = ${itemID}`,
-                item,
-              });
-            });
-        }),
+          });
+      }),
     );
   }
 
