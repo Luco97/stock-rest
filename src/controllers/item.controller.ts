@@ -11,11 +11,11 @@ import {
   UseGuards,
   Controller,
   SetMetadata,
-  UploadedFile,
   ParseIntPipe,
   ValidationPipe,
   ParseArrayPipe,
   UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common';
 import { extname } from 'path';
@@ -29,6 +29,7 @@ import { ItemService } from '../services/item.service';
 import { GetTokenInterceptor } from '../interceptors/get-token.interceptor';
 import { CreateItemInterceptor } from '../interceptors/create-item.interceptor';
 import { FastifyFileInterceptor } from '../interceptors/fastify-file.interceptor';
+import { MultipleFilesInterceptor } from 'src/interceptors/multiple-files.interceptor';
 
 @Controller('item')
 export class ItemController {
@@ -68,9 +69,12 @@ export class ItemController {
         userType,
       })
       .then(([items, count]) =>
-        res
-          .status(HttpStatus.OK)
-          .send({ items, count, statusCode: HttpStatus.OK, message: 'All items' }),
+        res.status(HttpStatus.OK).send({
+          items,
+          count,
+          statusCode: HttpStatus.OK,
+          message: 'All items',
+        }),
       );
   }
 
@@ -100,9 +104,9 @@ export class ItemController {
   @UseGuards(RoleGuard)
   @UseInterceptors(
     GetTokenInterceptor,
-    FastifyFileInterceptor('file', {
+    MultipleFilesInterceptor('displayImages', 5, {
       storage: diskStorage({
-        destination: './upload/single',
+        destination: './upload/multiple',
         filename(req, file, callback) {
           callback(
             null,
@@ -123,15 +127,16 @@ export class ItemController {
   )
   async create(
     @Headers('user_id') userID: string,
-    @UploadedFile() file: Express.Multer.File,
-    @Body(new ValidationPipe()) createBody: CreateItem,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Body(new ValidationPipe())
+    createBody: CreateItem,
     @Res() res: FastifyReply,
   ) {
     const { name, price, stock } = createBody;
 
     this._itemService
       .create({
-        file,
+        files,
         name,
         price,
         stock,
