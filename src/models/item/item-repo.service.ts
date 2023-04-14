@@ -17,14 +17,16 @@ export class ItemRepoService {
     stock: number;
     price: number;
     imageUrl: string;
+    displayImagesUrl: string[];
     userID: number;
   }) {
-    const { imageUrl, name, price, stock, userID } = params;
+    const { imageUrl, name, price, stock, userID, displayImagesUrl } = params;
     const newItem = this._itemRepo.create({
-      imageUrl: imageUrl || 'default.png',
+      imageUrl,
       name,
       price,
       stock,
+      imagesArrayUrl: displayImagesUrl,
       user: { id: userID },
     });
 
