@@ -12,7 +12,7 @@ import FastifyMulter from 'fastify-multer';
 import { Options, Multer } from 'multer';
 
 type MulterInstance = any;
-export function FastifyMultipleFilesInterceptor(
+export function MultipleFilesInterceptor(
   fieldName: string,
   maxCount?: number,
   localOptions?: Options,
