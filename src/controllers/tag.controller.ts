@@ -40,7 +40,7 @@ export class TagController {
   }
 
   @Post('create')
-  @SetMetadata('roles', ['admin', 'master'])
+  @SetMetadata('roles', ['admin', 'master', 'mod'])
   @UseGuards(RoleGuard)
   create(@Body() createTag: CreateTag, @Res() res: FastifyReply) {
     const { description, name } = createTag;
@@ -50,12 +50,16 @@ export class TagController {
       .then((newTag) =>
         res
           .status(HttpStatus.OK)
-          .send({ statusCode: HttpStatus.OK, message: 'tag created', tag: newTag }),
+          .send({
+            statusCode: HttpStatus.OK,
+            message: 'tag created',
+            tag: newTag,
+          }),
       );
   }
 
   @Put(':tagID/update')
-  @SetMetadata('roles', ['admin'])
+  @SetMetadata('roles', ['admin', 'mod'])
   @UseGuards(RoleGuard)
   update(
     @Param('tagID', ParseIntPipe) tagID: number,

@@ -28,7 +28,6 @@ import { RoleGuard } from '../guards/role.guard';
 import { ItemService } from '../services/item.service';
 import { GetTokenInterceptor } from '../interceptors/get-token.interceptor';
 import { CreateItemInterceptor } from '../interceptors/create-item.interceptor';
-import { FastifyFileInterceptor } from '../interceptors/fastify-file.interceptor';
 import { MultipleFilesInterceptor } from 'src/interceptors/multiple-files.interceptor';
 
 @Controller('item')
@@ -36,7 +35,7 @@ export class ItemController {
   constructor(private _itemService: ItemService) {}
 
   @Get()
-  @SetMetadata('roles', ['basic', 'admin'])
+  @SetMetadata('roles', ['basic', 'admin', 'master', 'mod'])
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   findAll(
@@ -79,7 +78,7 @@ export class ItemController {
   }
 
   @Get(':itemID')
-  @SetMetadata('roles', ['basic', 'admin'])
+  @SetMetadata('roles', ['basic', 'admin', 'master', 'mod'])
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   findOne(
@@ -146,7 +145,7 @@ export class ItemController {
   }
 
   @Put(':itemID/update')
-  @SetMetadata('roles', ['basic', 'admin'])
+  @SetMetadata('roles', ['basic', 'admin', 'mod'])
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   update(
@@ -171,7 +170,7 @@ export class ItemController {
   }
 
   @Delete(':itemID/delete')
-  @SetMetadata('roles', ['admin'])
+  @SetMetadata('roles', ['admin', 'mod'])
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   delete(
@@ -219,7 +218,7 @@ export class ItemController {
   }
 
   @Put(':itemID/update-tags')
-  @SetMetadata('roles', ['basic', 'admin'])
+  @SetMetadata('roles', ['basic', 'admin', 'mod'])
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   updateTags(
@@ -242,7 +241,7 @@ export class ItemController {
   }
 
   @Get(':itemID/related-items')
-  @SetMetadata('roles', ['basic', 'admin'])
+  @SetMetadata('roles', ['basic', 'admin', 'mod'])
   @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   relatedItems(
