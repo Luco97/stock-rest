@@ -49,16 +49,31 @@ export class ItemRepoService {
   }): Promise<[ItemModel[], number]> {
     const { order, orderBy, skip, take, rol, userID, search, tagsID } = params;
 
-    const itemName: { [key: string]: { $ilike: string } }[] = search.map<{
-      [key: string]: { $ilike: string };
-    }>((element) => ({ ['lower("item"."name")']: { $ilike: `%${element}%` } }));
+    const itemName: { [key: string]: { $ilike: string } }[] =
+      search?.map<{
+        [key: string]: { $ilike: string };
+      }>((element) => ({
+        ['lower("item"."name")']: { $ilike: `%${element}%` },
+      })) || [];
 
-    // const tagName: { [key: string]: { $ilike: string } }[] = search.map<{
-    //   [key: string]: { $ilike: string };
-    // }>((element) => ({ ['lower("tag"."name")']: { $ilike: `%${element}%` } }));
+    const tagName: { [key: string]: { $ilike: string } }[] =
+      search?.map<{
+        [key: string]: { $ilike: string };
+      }>((element) => ({
+        ['lower("tags"."name")']: { $ilike: `%${element}%` },
+      })) || [];
 
     return this._itemRepo
       .createQueryBuilder('item')
+      .select([
+        'item.id',
+        'item.name',
+        'item.price',
+        'item.stock',
+        'item.imageUrl',
+        'item.createdAt',
+        'item.updatedAt',
+      ])
       .leftJoinAndSelect('item.user', 'user')
       .leftJoinAndSelect('item.tags', 'tags')
       .where({
@@ -66,12 +81,29 @@ export class ItemRepoService {
           {
             $or: [
               { 'user.id': userID },
-              { "lower('admin')": rol },
-              { 'tags.id': { $in: tagsID } },
-              // ...tagName,
+              {
+                $and: [
+                  {
+                    "lower('admin')": rol,
+                  },
+                  { 'user.type': { $nin: ['master', 'mod', 'admin'] } },
+                ],
+              },
+              {
+                $and: [
+                  {
+                    "lower('mod')": rol,
+                  },
+                  { 'user.type': { $nin: ['master', 'mod'] } },
+                ],
+              },
+              { "lower('master')": rol },
+              { 'tags.id': { $in: tagsID || [] } },
             ],
           },
-          ...itemName,
+          {
+            $or: [...itemName, ...tagName],
+          },
         ],
       })
       .limit(take, take * skip)
