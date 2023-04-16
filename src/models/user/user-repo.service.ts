@@ -3,7 +3,7 @@ import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
 import { UserItemsCount, UserModel } from './user-model';
-import { UserTypes } from './user.enum';
+import { UserTypes, hashPass } from './user.enum';
 import { QueryOrder } from '@mikro-orm/core';
 
 @Injectable()
@@ -61,13 +61,11 @@ export class UserRepoService {
 
   updatePass(user_id: number, password: string): Promise<number> {
     return new Promise<number>((resolve, reject) =>
-      new UserModel()
-        .hashPass(password)
-        .then((newHashPass) =>
-          this._userRepo
-            .nativeUpdate({ id: user_id }, { password: newHashPass })
-            .then((value) => resolve(value)),
-        ),
+      hashPass(password).then((newHashPass) =>
+        this._userRepo
+          .nativeUpdate({ id: user_id }, { password: newHashPass })
+          .then((value) => resolve(value)),
+      ),
     );
   }
 
