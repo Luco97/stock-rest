@@ -9,9 +9,8 @@ import {
   BeforeCreate,
 } from '@mikro-orm/core';
 import { EntityManager } from '@mikro-orm/postgresql';
-import { genSalt, hash } from 'bcrypt';
 
-import { UserTypes } from './user.enum';
+import { UserTypes, hashPass } from './user.enum';
 import { ItemModel } from '../item/item-model';
 
 @Entity()
@@ -35,20 +34,10 @@ export class UserModel {
   items: Collection<ItemModel> = new Collection<ItemModel>(this);
 
   @BeforeCreate()
-  async hashPass(pass?: string) {
-    if (!(this.password || pass)) return;
-    const saltRound: number = 10;
-    const newPassword = pass || this.password;
-    return new Promise<string>((resolve, reject) => {
-      genSalt(saltRound).then((bcSaltRound) =>
-        hash(newPassword, bcSaltRound)
-          .then((hashPass) => {
-            if (!pass) this.password = hashPass;
-            resolve(hashPass);
-          })
-          .catch((error) => reject(error)),
-      );
-    });
+  async hashPass() {
+    if (!this.password) return;
+    const hashedPass: string = await hashPass(this.password);
+    this.password = hashedPass;
   }
 }
 
