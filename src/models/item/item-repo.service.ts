@@ -124,7 +124,28 @@ export class ItemRepoService {
       .where({
         $and: [
           { 'item.id': itemID },
-          { $or: [{ "lower('admin')": rol }, { 'user.id': userID }] },
+          {
+            $or: [
+              { 'user.id': userID },
+              {
+                $and: [
+                  {
+                    "lower('admin')": rol,
+                  },
+                  { 'user.type': { $nin: ['master', 'mod', 'admin'] } },
+                ],
+              },
+              {
+                $and: [
+                  {
+                    "lower('mod')": rol,
+                  },
+                  { 'user.type': { $nin: ['master', 'mod'] } },
+                ],
+              },
+              { "lower('master')": rol },
+            ],
+          },
         ],
       })
       .getSingleResult();
@@ -175,7 +196,28 @@ export class ItemRepoService {
         .where({
           $and: [
             { 'item.id': itemID },
-            { $or: [{ "lower('admin')": rol }, { 'user.id': userID }] },
+            {
+              $or: [
+                { 'user.id': userID }, // quien crea item
+                {
+                  $and: [
+                    {
+                      "lower('admin')": rol, // admin borrando otros items
+                    },
+                    { 'user.type': { $nin: ['master', 'mod', 'admin'] } }, // admin puede borrar propios o basicos
+                  ],
+                },
+                {
+                  $and: [
+                    {
+                      "lower('mod')": rol,
+                    },
+                    { 'user.type': { $nin: ['master', 'mod'] } },
+                  ],
+                },
+                { "lower('master')": rol },
+              ],
+            },
           ],
         })
         .getSingleResult()
