@@ -56,13 +56,6 @@ export class ItemRepoService {
         ['lower("item"."name")']: { $ilike: `%${element}%` },
       })) || [];
 
-    const tagName: { [key: string]: { $ilike: string } }[] =
-      search?.map<{
-        [key: string]: { $ilike: string };
-      }>((element) => ({
-        ['lower("tags"."name")']: { $ilike: `%${element}%` },
-      })) || [];
-
     return this._itemRepo
       .createQueryBuilder('item')
       .select([
@@ -98,11 +91,10 @@ export class ItemRepoService {
                 ],
               },
               { "lower('master')": rol },
-              { 'tags.id': { $in: tagsID || [] } },
             ],
           },
           {
-            $or: [...itemName, ...tagName],
+            $or: [...itemName, { 'tags.id': { $in: tagsID || [] } }],
           },
         ],
       })
