@@ -66,6 +66,7 @@ export class ItemController {
         orderBy,
         userID: +userID,
         userType,
+        tagsID,
       })
       .then(([items, count]) =>
         res.status(HttpStatus.OK).send({
