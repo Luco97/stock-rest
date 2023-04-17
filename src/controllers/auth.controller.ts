@@ -17,13 +17,13 @@ import {
 } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 
-import { Register, SignIn } from '@dto/auth';
-import { UserService } from '../services/user.service';
-import { AlphanumericPipe } from '@shared/pipes';
-import { GetTokenInterceptor } from '../interceptors/get-token.interceptor';
-import { RoleGuard } from '../guards/role.guard';
 import { Update } from '@dto/auth/update.dto';
+import { Register, SignIn } from '@dto/auth';
+import { AlphanumericPipe } from '@shared/pipes';
 import { UserTypes, UserTypesOptionsEnum } from '@models/user';
+import { RoleGuard } from '../guards/role.guard';
+import { UserService } from '../services/user.service';
+import { GetTokenInterceptor } from '../interceptors/get-token.interceptor';
 
 @Controller('auth')
 export class AuthController {
@@ -81,7 +81,7 @@ export class AuthController {
   @UseInterceptors(GetTokenInterceptor)
   update(
     @Headers('user_id') user_id: string,
-    @Param('updatePassToken') updatePassToken: string,
+    @Query('updatePassToken') updatePassToken: string,
     @Body() updateBody: Update,
     @Res() res: FastifyReply,
   ) {
@@ -117,7 +117,7 @@ export class AuthController {
     if (!password || !email)
       res.status(HttpStatus.OK).send({
         statusCode: HttpStatus.OK,
-        message: 'this is anyone, we say he can but probably is any asshole',
+        message: 'this is anyone',
       });
     else
       this._userService
