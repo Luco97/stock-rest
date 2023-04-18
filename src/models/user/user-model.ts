@@ -10,7 +10,7 @@ import {
 } from '@mikro-orm/core';
 import { EntityManager } from '@mikro-orm/postgresql';
 
-import { UserTypes, hashPass } from './user.enum';
+import { UserTypes, hashPass } from './user-const';
 import { ItemModel } from '../item/item-model';
 
 @Entity()

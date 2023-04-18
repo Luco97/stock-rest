@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { QueryOrder } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
 import { UserItemsCount, UserModel } from './user-model';
-import { UserTypes, hashPass } from './user.enum';
-import { QueryOrder } from '@mikro-orm/core';
+import { UserTypes, hashPass } from './user-const';
 
 @Injectable()
 export class UserRepoService {
