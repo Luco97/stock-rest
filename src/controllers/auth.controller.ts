@@ -17,13 +17,13 @@ import {
 } from '@nestjs/common';
 import { FastifyReply } from 'fastify';
 
-import { Update } from '@dto/auth/update.dto';
 import { Register, SignIn } from '@dto/auth';
+import { Update } from '@dto/auth/update.dto';
 import { AlphanumericPipe } from '@shared/pipes';
+import { GetTokenInterceptor } from '@shared/interceptors';
 import { UserTypes, UserTypesOptionsEnum } from '@models/user';
 import { RoleGuard } from '../guards/role.guard';
 import { UserService } from '../services/user.service';
-import { GetTokenInterceptor } from '../interceptors/get-token.interceptor';
 
 @Controller('auth')
 export class AuthController {

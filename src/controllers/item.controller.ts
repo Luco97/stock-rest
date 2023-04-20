@@ -23,12 +23,15 @@ import { randomUUID } from 'crypto';
 import { diskStorage } from 'multer';
 import { FastifyReply } from 'fastify';
 
+import {
+  GetTokenInterceptor,
+  CreateItemInterceptor,
+  MultipleFilesInterceptor,
+} from '@shared/interceptors';
 import { CreateItem, UpdateItem, UpdateTags } from '@dto/item';
+
 import { RoleGuard } from '../guards/role.guard';
 import { ItemService } from '../services/item.service';
-import { GetTokenInterceptor } from '../interceptors/get-token.interceptor';
-import { CreateItemInterceptor } from '../interceptors/create-item.interceptor';
-import { MultipleFilesInterceptor } from 'src/interceptors/multiple-files.interceptor';
 
 @Controller('item')
 export class ItemController {
