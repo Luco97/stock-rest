@@ -18,9 +18,9 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
+      "@dto/*": ["src/classes/*"],
       "@shared/*": ["src/shared/*"],
-      "@models/*": ["src/models/*"],
-      "@dto/*": ["src/classes/*"]
+      "@models/*": ["src/models/*"]
     }
   }
 }
