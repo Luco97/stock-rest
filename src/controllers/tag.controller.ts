@@ -45,21 +45,17 @@ export class TagController {
   create(@Body() createTag: CreateTag, @Res() res: FastifyReply) {
     const { description, name } = createTag;
 
-    this._tagService
-      .create({ name, description })
-      .then((newTag) =>
-        res
-          .status(HttpStatus.OK)
-          .send({
-            statusCode: HttpStatus.OK,
-            message: 'tag created',
-            tag: newTag,
-          }),
-      );
+    this._tagService.create({ name, description }).then((newTag) =>
+      res.status(HttpStatus.OK).send({
+        statusCode: HttpStatus.OK,
+        message: 'tag created',
+        tag: newTag,
+      }),
+    );
   }
 
   @Put(':tagID/update')
-  @SetMetadata('roles', ['admin', 'mod'])
+  @SetMetadata('roles', ['admin', 'mod', 'master'])
   @UseGuards(RoleGuard)
   update(
     @Param('tagID', ParseIntPipe) tagID: number,
