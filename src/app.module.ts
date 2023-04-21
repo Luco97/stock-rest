@@ -28,7 +28,7 @@ import { UserService } from './services/user.service';
 import { ItemService } from './services/item.service';
 
 // Middleware
-import { BearerTokenMiddleware } from './middleware/bearer-token.middleware';
+import { BearerTokenMiddleware } from '@shared/middleware';
 
 @Module({
   imports: [
