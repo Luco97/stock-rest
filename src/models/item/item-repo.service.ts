@@ -45,9 +45,22 @@ export class ItemRepoService {
     rol: string;
     userID: number;
     search?: string[];
-    tagsID?: number[];
+    inTagsID?: number[];
+    ninTagsID?: number[];
   }): Promise<[ItemModel[], number]> {
-    const { order, orderBy, skip, take, rol, userID, search, tagsID } = params;
+    const {
+      order,
+      orderBy,
+      skip,
+      take,
+      rol,
+      userID,
+      search,
+      inTagsID,
+      ninTagsID,
+    } = params;
+
+    let logicOr = [];
 
     const itemName: { [key: string]: { $ilike: string } }[] =
       search?.map<{
@@ -55,6 +68,10 @@ export class ItemRepoService {
       }>((element) => ({
         ['lower("item"."name")']: { $ilike: `%${element}%` },
       })) || [];
+
+    if (inTagsID?.length) logicOr.push({ 'tags.id': { $in: inTagsID } });
+    if (ninTagsID?.length) logicOr.push({ 'tags.id': { $nin: ninTagsID } });
+    logicOr.push(...itemName);
 
     return this._itemRepo
       .createQueryBuilder('item')
@@ -94,7 +111,7 @@ export class ItemRepoService {
             ],
           },
           {
-            $or: [...itemName, { 'tags.id': { $in: tagsID || [] } }],
+            $or: logicOr,
           },
         ],
       })
