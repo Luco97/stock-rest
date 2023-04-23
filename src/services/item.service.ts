@@ -286,8 +286,17 @@ export class ItemService {
             statusCode: HttpStatus.OK,
             message: `no item with id = ${itemID}`,
           });
-        else
-          this._itemRepo.updateTags({ item, tags }).then(() => {
+        else {
+          const beforeTags: string[] = item.tags
+            .getItems()
+            .map<string>((tag) => tag.name);
+          Promise.all([
+            this._itemRepo.updateTags({ item, tags }),
+            this._historicRepo.create(itemID, {
+              change: 'tags',
+              previousValue: beforeTags.length ? beforeTags.join() : 'no tags',
+            }),
+          ]).then(() => {
             resolve({
               statusCode: HttpStatus.OK,
               message: `tags ${
@@ -296,6 +305,7 @@ export class ItemService {
               item,
             });
           });
+        }
       }),
     );
   }
