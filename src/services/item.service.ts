@@ -27,10 +27,20 @@ export class ItemService {
     userID: number;
     userType: string;
     search?: string[];
-    tagsID?: number[];
+    inTagsID?: number[];
+    ninTagsID?: number[];
   }): Promise<[ItemModel[], number]> {
-    const { order, orderBy, skip, take, userID, userType, search, tagsID } =
-      params;
+    const {
+      order,
+      orderBy,
+      skip,
+      take,
+      userID,
+      userType,
+      search,
+      inTagsID,
+      ninTagsID,
+    } = params;
 
     return this._itemRepo.findAll({
       take: take || 10,
@@ -46,7 +56,8 @@ export class ItemService {
       rol: userType,
       userID: userID,
       search: search || [],
-      tagsID: tagsID || [],
+      inTagsID: inTagsID || [],
+      ninTagsID: ninTagsID || [],
     });
   }
 

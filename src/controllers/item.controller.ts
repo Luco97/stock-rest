@@ -58,6 +58,11 @@ export class ItemController {
       new ParseArrayPipe({ items: Number, optional: true, separator: ',' }),
     )
     tagsID: number[],
+    @Query(
+      'tagsID',
+      new ParseArrayPipe({ items: Number, optional: true, separator: ',' }),
+    )
+    excludeTagsID: number[],
     @Res() res: FastifyReply,
   ) {
     this._itemService
@@ -69,7 +74,8 @@ export class ItemController {
         orderBy,
         userID: +userID,
         userType,
-        tagsID,
+        inTagsID: tagsID,
+        ninTagsID: excludeTagsID,
       })
       .then(([items, count]) =>
         res.status(HttpStatus.OK).send({
