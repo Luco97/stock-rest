@@ -46,7 +46,10 @@ export class TagRepoService {
     const { description, name } = params;
 
     return new Promise<TagModel>((resolve, reject) => {
-      const newTag: TagModel = this._tagRepo.create({ name, description });
+      const newTag: TagModel = this._tagRepo.create({
+        name: name.replace(/[^A-Za-z0-9 | ñ]*/g, '-'),
+        description,
+      });
       this._tagRepo.persistAndFlush(newTag).then(() => resolve(newTag));
     });
   }
