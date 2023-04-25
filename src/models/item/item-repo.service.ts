@@ -23,7 +23,7 @@ export class ItemRepoService {
     const { imageUrl, name, price, stock, userID, displayImagesUrl } = params;
     const newItem = this._itemRepo.create({
       imageUrl,
-      name,
+      name: name.replace(/[^A-Za-z0-9|ñ]+/g, '-'),
       price,
       stock,
       imagesArrayUrl: displayImagesUrl,
