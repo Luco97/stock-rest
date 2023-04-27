@@ -169,7 +169,7 @@ export class ItemRepoService {
   }): Promise<ItemModel> {
     const { imageUrl, name, price, stock, item } = params;
 
-    if (name) item['name'] = name;
+    if (name) item['name'] = name.replace(/[^A-Za-z0-9|ñ]+/g, '-');
     if (price) item['price'] = price;
     if (stock) item['stock'] = stock;
     if (imageUrl) item['imageUrl'] = imageUrl;
