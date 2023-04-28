@@ -59,7 +59,7 @@ export class ItemController {
     )
     tagsID: number[],
     @Query(
-      'tagsID',
+      'excludeTagsID',
       new ParseArrayPipe({ items: Number, optional: true, separator: ',' }),
     )
     excludeTagsID: number[],
@@ -68,7 +68,10 @@ export class ItemController {
     this._itemService
       .findAll({
         order,
-        search,
+        search:
+          search?.map<string>((word) =>
+            word.replace(/[^A-Za-z0-9|ñ]+/g, '-'),
+          ) || [],
         skip: +skip,
         take: +take,
         orderBy,
