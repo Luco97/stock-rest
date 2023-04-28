@@ -144,7 +144,7 @@ export class ItemController {
     createBody: CreateItem,
     @Res() res: FastifyReply,
   ) {
-    const { name, price, stock } = createBody;
+    const { name, price, description, stock } = createBody;
 
     this._itemService
       .create({
@@ -153,6 +153,7 @@ export class ItemController {
         price,
         stock,
         userID: +userID,
+        description,
       })
       .then((response) => res.status(response.statusCode).send(response));
   }
@@ -168,12 +169,12 @@ export class ItemController {
     @Body() cuerpo: UpdateItem,
     @Res() res: FastifyReply,
   ) {
-    const { imageUrl, name, price, stock } = cuerpo;
+    const { imageUrl, description, price, stock } = cuerpo;
     this._itemService
       .update({
         imageUrl,
         itemID,
-        name,
+        description,
         price,
         stock,
         userID: +userID,
@@ -181,6 +182,18 @@ export class ItemController {
       })
       .then((response) => res.status(response.statusCode).send(response));
   }
+
+  @Put(':itemID/update-images')
+  @SetMetadata('roles', ['basic', 'admin', 'mod'])
+  @UseGuards(RoleGuard)
+  @UseInterceptors(GetTokenInterceptor)
+  updateImages(
+    @Headers('user_id') userID: string,
+    @Headers('user_type') userType: string,
+    @Param('itemID', ParseIntPipe) itemID: number,
+    @Body() cuerpo: UpdateItem,
+    @Res() res: FastifyReply,
+  ) {}
 
   @Delete(':itemID/delete')
   @SetMetadata('roles', ['admin', 'mod'])

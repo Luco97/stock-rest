@@ -17,15 +17,25 @@ export class ItemRepoService {
     stock: number;
     price: number;
     imageUrl: string;
+    description: string;
     displayImagesUrl: string[];
     userID: number;
   }) {
-    const { imageUrl, name, price, stock, userID, displayImagesUrl } = params;
+    const {
+      imageUrl,
+      name,
+      price,
+      description,
+      stock,
+      userID,
+      displayImagesUrl,
+    } = params;
     const newItem = this._itemRepo.create({
       imageUrl,
       name: name.replace(/[^A-Za-z0-9|ñ]+/g, '-'),
       price,
       stock,
+      description,
       imagesArrayUrl: displayImagesUrl,
       user: { id: userID },
     });
@@ -162,16 +172,16 @@ export class ItemRepoService {
 
   updateItem(params: {
     item: ItemModel;
-    name: string;
+    description: string;
     stock: number;
     price: number;
     imageUrl: string;
   }): Promise<ItemModel> {
-    const { imageUrl, name, price, stock, item } = params;
+    const { imageUrl, description, price, stock, item } = params;
 
-    if (name) item['name'] = name.replace(/[^A-Za-z0-9|ñ]+/g, '-');
     if (price) item['price'] = price;
     if (stock) item['stock'] = stock;
+    if (description) item['description'] = description;
     if (imageUrl) item['imageUrl'] = imageUrl;
 
     return new Promise<ItemModel>((resolve, reject) =>

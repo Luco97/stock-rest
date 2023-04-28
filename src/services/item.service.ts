@@ -77,12 +77,13 @@ export class ItemService {
     price: number;
     stock: number;
     userID: number;
+    description: string;
   }): Promise<{
     statusCode: number;
     message: string;
     item: RequiredEntityData<ItemModel>;
   }> {
-    const { files, name, price, stock, userID } = params;
+    const { files, name, price, description, stock, userID } = params;
 
     return new Promise<{
       statusCode: number;
@@ -100,6 +101,7 @@ export class ItemService {
             price,
             stock,
             userID,
+            description,
           })
           .then((result) =>
             resolve({
@@ -111,6 +113,7 @@ export class ItemService {
                 imageUrl: defaultImage,
                 price,
                 stock,
+                description,
               },
             }),
           );
@@ -118,7 +121,7 @@ export class ItemService {
         const uploadImageSet: Promise<UploadApiResponse>[] = files.map((file) =>
           this._cloudinaryService.upload(
             file.path,
-            `product_${name.toLowerCase().replace(' ', '-')}`,
+            `product_${name.toLowerCase().replace(/[^A-Za-z0-9|ñ]+/g, '-')}`,
             file.filename,
           ),
         );
@@ -148,6 +151,7 @@ export class ItemService {
                 name,
                 price,
                 stock,
+                description,
                 displayImagesUrl: displayImages,
                 userID,
               })
@@ -172,14 +176,15 @@ export class ItemService {
 
   update(params: {
     imageUrl: string;
-    name: string;
     price: number;
     stock: number;
     userID: number;
     userType: string;
     itemID: number;
+    description: string;
   }): Promise<{ statusCode: number; message: string; item?: ItemModel }> {
-    const { imageUrl, name, price, stock, itemID, userID, userType } = params;
+    const { description, imageUrl, price, stock, itemID, userID, userType } =
+      params;
 
     return new Promise<{
       statusCode: number;
@@ -195,7 +200,7 @@ export class ItemService {
         else {
           const allChanges = this.allChanges({
             imageUrl,
-            name,
+            description,
             price,
             stock,
             item,
@@ -215,7 +220,7 @@ export class ItemService {
             this._itemRepo.updateItem({
               imageUrl,
               item,
-              name,
+              description,
               price,
               stock,
             }),
@@ -369,12 +374,12 @@ export class ItemService {
 
   private allChanges(params: {
     imageUrl: string;
-    name: string;
+    description: string;
     price: number;
     stock: number;
     item: ItemModel;
   }): Promise<QueryResult<HistoricModel>>[] {
-    const { imageUrl, name, price, stock, item } = params;
+    const { imageUrl, description, price, stock, item } = params;
     const allChanges: Promise<QueryResult<HistoricModel>>[] = [];
     if (imageUrl)
       allChanges.push(
@@ -383,11 +388,11 @@ export class ItemService {
           previousValue: item.imageUrl,
         }),
       );
-    if (name)
+    if (description)
       allChanges.push(
         this._historicRepo.create(item.id, {
-          change: 'name',
-          previousValue: item.name,
+          change: 'description',
+          previousValue: item.description ?? 'no description',
         }),
       );
     if (price)
