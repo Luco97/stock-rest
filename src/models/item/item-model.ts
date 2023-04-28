@@ -29,6 +29,9 @@ export class ItemModel {
   price: number;
 
   @Property({ nullable: true })
+  description: string;
+
+  @Property({ nullable: true })
   imageUrl: string;
 
   @Property({ type: ArrayType, nullable: true })

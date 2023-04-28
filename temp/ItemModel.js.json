@@ -33,6 +33,15 @@
         "type": "number",
         "array": false
       },
+      "description": {
+        "name": "description",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
       "imageUrl": {
         "name": "imageUrl",
         "reference": "scalar",
@@ -48,7 +57,8 @@
         "nullable": true,
         "getter": false,
         "setter": false,
-        "array": true
+        "array": true,
+        "optional": true
       },
       "createdAt": {
         "name": "createdAt",
@@ -125,6 +135,15 @@
         "array": false
       },
       {
+        "name": "description",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false
+      },
+      {
         "name": "imageUrl",
         "reference": "scalar",
         "nullable": true,
@@ -139,7 +158,8 @@
         "nullable": true,
         "getter": false,
         "setter": false,
-        "array": true
+        "array": true,
+        "optional": true
       },
       {
         "name": "createdAt",
@@ -228,6 +248,6 @@
     "collection": "item_model"
   },
   "origin": "./dist/models/item/item-model.js",
-  "hash": "cfb6e6f3353588010868345e70b48725",
+  "hash": "6de6bd436bab5a8afe1742cdd4c9ad36",
   "version": "5.6.9"
 }
