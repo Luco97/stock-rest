@@ -22,7 +22,7 @@ export class UpdateItem {
 
   @IsOptional()
   @MinLength(5)
-  name: string;
+  description: string;
 }
 
 export class UpdateTags {
