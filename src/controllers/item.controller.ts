@@ -169,10 +169,11 @@ export class ItemController {
     @Body() cuerpo: UpdateItem,
     @Res() res: FastifyReply,
   ) {
-    const { imageUrl, description, price, stock } = cuerpo;
+    const { imageUrl, description, price, stock, imagesUrl } = cuerpo;
     this._itemService
       .update({
         imageUrl,
+        imagesUrl,
         itemID,
         description,
         price,
@@ -182,18 +183,6 @@ export class ItemController {
       })
       .then((response) => res.status(response.statusCode).send(response));
   }
-
-  @Put(':itemID/update-images')
-  @SetMetadata('roles', ['basic', 'admin', 'mod'])
-  @UseGuards(RoleGuard)
-  @UseInterceptors(GetTokenInterceptor)
-  updateImages(
-    @Headers('user_id') userID: string,
-    @Headers('user_type') userType: string,
-    @Param('itemID', ParseIntPipe) itemID: number,
-    @Body() cuerpo: UpdateItem,
-    @Res() res: FastifyReply,
-  ) {}
 
   @Delete(':itemID/delete')
   @SetMetadata('roles', ['admin', 'mod'])
