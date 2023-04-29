@@ -176,6 +176,7 @@ export class ItemService {
 
   update(params: {
     imageUrl: string;
+    imagesUrl: string[];
     price: number;
     stock: number;
     userID: number;
@@ -183,8 +184,16 @@ export class ItemService {
     itemID: number;
     description: string;
   }): Promise<{ statusCode: number; message: string; item?: ItemModel }> {
-    const { description, imageUrl, price, stock, itemID, userID, userType } =
-      params;
+    const {
+      description,
+      imageUrl,
+      price,
+      stock,
+      itemID,
+      userID,
+      userType,
+      imagesUrl,
+    } = params;
 
     return new Promise<{
       statusCode: number;
@@ -204,6 +213,7 @@ export class ItemService {
             price,
             stock,
             item,
+            imagesUrl: imagesUrl.length,
           });
 
           // this._itemRepo
@@ -215,6 +225,16 @@ export class ItemService {
           //       item: updateItem,
           //     }),
           //   );
+
+          if (
+            imageUrl &&
+            !item.imageUrl.includes(imageUrl) &&
+            item.imageUrl !=
+              this._configService.get<string>('ITEM_DEFAULT_IMAGE')
+          )
+            item.imagesArrayUrl.push(imageUrl);
+          if (imagesUrl.length)
+            item.imagesArrayUrl = [...item.imagesArrayUrl, ...imagesUrl];
 
           Promise.all([
             this._itemRepo.updateItem({
@@ -374,18 +394,26 @@ export class ItemService {
 
   private allChanges(params: {
     imageUrl: string;
+    imagesUrl: number;
     description: string;
     price: number;
     stock: number;
     item: ItemModel;
   }): Promise<QueryResult<HistoricModel>>[] {
-    const { imageUrl, description, price, stock, item } = params;
+    const { imageUrl, description, price, stock, item, imagesUrl } = params;
     const allChanges: Promise<QueryResult<HistoricModel>>[] = [];
     if (imageUrl)
       allChanges.push(
         this._historicRepo.create(item.id, {
-          change: 'image',
+          change: 'front image',
           previousValue: item.imageUrl,
+        }),
+      );
+    if (imagesUrl)
+      allChanges.push(
+        this._historicRepo.create(item.id, {
+          change: 'images',
+          previousValue: `add ${imagesUrl} images`,
         }),
       );
     if (description)
