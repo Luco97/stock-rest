@@ -36,11 +36,4 @@ export class CloudinaryService {
       public_id: fileName,
     });
   }
-
-  delete(public_id: string): Promise<any> {
-    this._cloudinary.uploader.rename
-    return this._cloudinary.uploader.destroy(public_id);
-  }
-
-
 }
