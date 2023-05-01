@@ -56,7 +56,10 @@ export class UserService {
         .findUser({ email, username: username || '' })
         .then((user) => {
           if (!user)
-            resolve({ statusCode: HttpStatus.OK, message: `user doesn't exist` });
+            resolve({
+              statusCode: HttpStatus.NOT_FOUND,
+              message: `user doesn't exist`,
+            });
           else {
             if (resetPass)
               resolve({

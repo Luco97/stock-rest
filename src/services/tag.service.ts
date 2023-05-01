@@ -34,7 +34,10 @@ export class TagService {
       (resolve, reject) =>
         this._tagRepo.findAllByID([tagID]).then(([tag]) => {
           if (!tag)
-            resolve({ statusCode: HttpStatus.OK, message: 'no tag with that id' });
+            resolve({
+              statusCode: HttpStatus.NOT_FOUND,
+              message: 'no tag with that id',
+            });
           else
             this._tagRepo.update(description, tag).then((newTag) =>
               resolve({
