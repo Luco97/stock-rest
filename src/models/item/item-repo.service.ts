@@ -43,10 +43,6 @@ export class ItemRepoService {
     return this._itemRepo.createQueryBuilder().insert(newItem).execute('run');
   }
 
-  init() {
-    return this._itemRepo.flush();
-  }
-
   findAll(params: {
     skip: number;
     take: number;
