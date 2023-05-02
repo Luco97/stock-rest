@@ -8,6 +8,7 @@ import {
   Collection,
   ManyToMany,
   PrimaryKey,
+  BeforeCreate,
 } from '@mikro-orm/core';
 
 import { TagModel } from '../tag/tag-model';
@@ -37,6 +38,9 @@ export class ItemModel {
   @Property({ type: ArrayType, nullable: true })
   imagesArrayUrl?: string[];
 
+  @Property({ nullable: true })
+  assetsFolder?: string;
+
   @Property()
   createdAt: Date = new Date();
 
@@ -56,4 +60,9 @@ export class ItemModel {
     cascade: [],
   })
   tags: Collection<TagModel> = new Collection<TagModel>(this);
+
+  @BeforeCreate()
+  async assetsName() {
+    this.assetsFolder = `product_${this.name.toLowerCase()}`;
+  }
 }

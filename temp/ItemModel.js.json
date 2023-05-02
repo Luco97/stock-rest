@@ -60,6 +60,16 @@
         "array": true,
         "optional": true
       },
+      "assetsFolder": {
+        "name": "assetsFolder",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false,
+        "optional": true
+      },
       "createdAt": {
         "name": "createdAt",
         "reference": "scalar",
@@ -162,6 +172,16 @@
         "optional": true
       },
       {
+        "name": "assetsFolder",
+        "reference": "scalar",
+        "nullable": true,
+        "getter": false,
+        "setter": false,
+        "type": "string",
+        "array": false,
+        "optional": true
+      },
+      {
         "name": "createdAt",
         "reference": "scalar",
         "getter": false,
@@ -205,7 +225,7 @@
     ],
     "primaryKeys": ["id"],
     "filters": {},
-    "hooks": {},
+    "hooks": { "beforeCreate": ["assetsName"] },
     "indexes": [],
     "uniques": [],
     "checks": [],
@@ -248,6 +268,6 @@
     "collection": "item_model"
   },
   "origin": "./dist/models/item/item-model.js",
-  "hash": "6de6bd436bab5a8afe1742cdd4c9ad36",
+  "hash": "2447247a184b248512f45d516d229ebe",
   "version": "5.6.9"
 }
