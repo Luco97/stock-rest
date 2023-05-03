@@ -166,6 +166,13 @@ export class ItemRepoService {
       .getSingleResult();
   }
 
+  findOneByName(name: string): Promise<number> {
+    return this._itemRepo
+      .createQueryBuilder('item')
+      .where({ 'item.name': name.replace(/[^A-Za-z0-9|ñ]+/g, '-') })
+      .getCount();
+  }
+
   updateItem(params: {
     item: ItemModel;
     description: string;

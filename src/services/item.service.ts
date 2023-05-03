@@ -65,10 +65,15 @@ export class ItemService {
     itemID: number;
     rol: string;
     userID: number;
+    itemName?: string;
   }): Promise<ItemModel> {
-    const { itemID, rol, userID } = params;
+    const { itemID, rol, userID, itemName } = params;
 
     return this._itemRepo.findOne({ itemID, rol, userID });
+  }
+
+  findOneByName(itemName: string): Promise<number> {
+    return this._itemRepo.findOneByName(itemName);
   }
 
   create(params: {
