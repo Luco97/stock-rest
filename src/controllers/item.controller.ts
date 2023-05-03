@@ -9,15 +9,16 @@ import {
   Delete,
   Headers,
   UseGuards,
+  HttpStatus,
   Controller,
   SetMetadata,
   ParseIntPipe,
+  UploadedFiles,
   ValidationPipe,
   ParseArrayPipe,
   UseInterceptors,
-  UploadedFiles,
 } from '@nestjs/common';
-import { HttpStatus } from '@nestjs/common';
+import {} from '@nestjs/common';
 import { extname } from 'path';
 import { randomUUID } from 'crypto';
 import { diskStorage } from 'multer';
@@ -146,16 +147,23 @@ export class ItemController {
   ) {
     const { name, price, description, stock } = createBody;
 
-    this._itemService
-      .create({
-        files,
-        name,
-        price,
-        stock,
-        userID: +userID,
-        description,
-      })
-      .then((response) => res.status(response.statusCode).send(response));
+    this._itemService.findOneByName(name).then((count) => {
+      if (count)
+        res
+          .status(HttpStatus.CONFLICT)
+          .send({ status: HttpStatus.CONFLICT, message: 'name already on use' });
+      else
+        this._itemService
+          .create({
+            files,
+            name,
+            price,
+            stock,
+            userID: +userID,
+            description,
+          })
+          .then((response) => res.status(response.statusCode).send(response));
+    });
   }
 
   @Put(':itemID/update')
