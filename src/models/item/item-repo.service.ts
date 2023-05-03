@@ -169,7 +169,11 @@ export class ItemRepoService {
   findOneByName(name: string): Promise<number> {
     return this._itemRepo
       .createQueryBuilder('item')
-      .where({ 'item.name': name.replace(/[^A-Za-z0-9|ñ]+/g, '-') })
+      .where({
+        'lower("item"."name")': name
+          .toLowerCase()
+          .replace(/[^A-Za-z0-9|ñ]+/g, '-'),
+      })
       .getCount();
   }
 
