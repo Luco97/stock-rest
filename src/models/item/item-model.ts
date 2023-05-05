@@ -38,8 +38,8 @@ export class ItemModel {
   @Property({ type: ArrayType, nullable: true })
   imagesArrayUrl?: string[];
 
-  @Property({ nullable: true })
-  assetsFolder?: string;
+  @Property()
+  assetsFolder: string;
 
   @Property()
   createdAt: Date = new Date();
