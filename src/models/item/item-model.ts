@@ -35,9 +35,6 @@ export class ItemModel {
   @Property({ nullable: true })
   imageUrl: string;
 
-  @Property({ type: ArrayType, nullable: true })
-  imagesArrayUrl?: string[];
-
   @Property()
   assetsFolder: string;
 
