@@ -27,7 +27,7 @@ import { FastifyReply } from 'fastify';
 import {
   GetTokenInterceptor,
   CreateItemInterceptor,
-  MultipleFilesInterceptor,
+  FastifyFileInterceptor,
 } from '@shared/interceptors';
 import { CreateItem, UpdateItem, UpdateTags } from '@dto/item';
 
@@ -117,9 +117,9 @@ export class ItemController {
   @UseGuards(RoleGuard)
   @UseInterceptors(
     GetTokenInterceptor,
-    MultipleFilesInterceptor('displayImages', 5, {
+    FastifyFileInterceptor('file', {
       storage: diskStorage({
-        destination: './upload/multiple',
+        destination: './upload/single',
         filename(req, file, callback) {
           callback(
             null,
@@ -140,7 +140,7 @@ export class ItemController {
   )
   async create(
     @Headers('user_id') userID: string,
-    @UploadedFiles() files: Express.Multer.File[],
+    @UploadedFiles() file: Express.Multer.File,
     @Body(new ValidationPipe())
     createBody: CreateItem,
     @Res() res: FastifyReply,
@@ -149,13 +149,14 @@ export class ItemController {
 
     this._itemService.findOneByName(name).then((count) => {
       if (count)
-        res
-          .status(HttpStatus.CONFLICT)
-          .send({ status: HttpStatus.CONFLICT, message: 'name already on use' });
+        res.status(HttpStatus.CONFLICT).send({
+          status: HttpStatus.CONFLICT,
+          message: 'name already on use',
+        });
       else
         this._itemService
           .create({
-            files,
+            file,
             name,
             price,
             stock,
@@ -177,11 +178,10 @@ export class ItemController {
     @Body() cuerpo: UpdateItem,
     @Res() res: FastifyReply,
   ) {
-    const { imageUrl, description, price, stock, imagesUrl } = cuerpo;
+    const { imageUrl, description, price, stock } = cuerpo;
     this._itemService
       .update({
         imageUrl,
-        imagesUrl,
         itemID,
         description,
         price,

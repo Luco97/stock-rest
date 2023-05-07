@@ -77,7 +77,7 @@ export class ItemService {
   }
 
   create(params: {
-    files: Express.Multer.File[];
+    file: Express.Multer.File;
     name: string;
     price: number;
     stock: number;
@@ -88,20 +88,19 @@ export class ItemService {
     message: string;
     item: RequiredEntityData<ItemModel>;
   }> {
-    const { files, name, price, description, stock, userID } = params;
+    const { file, name, price, description, stock, userID } = params;
 
     return new Promise<{
       statusCode: number;
       message: string;
       item: RequiredEntityData<ItemModel>;
     }>((resolve, reject) => {
-      if (!files.length) {
+      if (!file) {
         const defaultImage: string =
           this._configService.get<string>('ITEM_DEFAULT_IMAGE');
         this._itemRepo
           .create({
             imageUrl: defaultImage,
-            displayImagesUrl: [defaultImage],
             name,
             price,
             stock,
@@ -123,41 +122,27 @@ export class ItemService {
             }),
           );
       } else {
-        const uploadImageSet: Promise<UploadApiResponse>[] = files.map((file) =>
-          this._cloudinaryService.upload(
+        this._cloudinaryService
+          .upload(
             file.path,
             `product_${name.toLowerCase().replace(/[^A-Za-z0-9|ñ]+/g, '-')}`,
             file.filename,
-          ),
-        );
-        Promise.all(uploadImageSet)
-          // this._cloudinaryService
-          //   .upload(
-          //     file.path,
-          //     `product_${name.toLowerCase().replace(' ', '-')}`,
-          //     file.filename,
-          //   )
+          )
           .then((cloudinaryResponse) => {
-            files.forEach((file) =>
-              unlink(
-                file.path,
-                (error) =>
-                  new Error(
-                    `Somethin went wrong with unlink file ${file.filename}`,
-                  ),
-              ),
-            );
-            const displayImages: string[] = cloudinaryResponse.map(
-              (images) => images.url,
+            unlink(
+              file.path,
+              (error) =>
+                new Error(
+                  `Somethin went wrong with unlink file ${file.filename}`,
+                ),
             );
             this._itemRepo
               .create({
-                imageUrl: displayImages[0],
+                imageUrl: cloudinaryResponse.url,
                 name,
                 price,
                 stock,
                 description,
-                displayImagesUrl: displayImages,
                 userID,
               })
               .then((result) =>
@@ -169,8 +154,7 @@ export class ItemService {
                     name,
                     price,
                     stock,
-                    imageUrl: displayImages[0],
-                    imagesArrayUrl: displayImages,
+                    imageUrl: cloudinaryResponse.url,
                   },
                 }),
               );
@@ -181,7 +165,6 @@ export class ItemService {
 
   update(params: {
     imageUrl: string;
-    imagesUrl: string[];
     price: number;
     stock: number;
     userID: number;
@@ -189,16 +172,8 @@ export class ItemService {
     itemID: number;
     description: string;
   }): Promise<{ statusCode: number; message: string; item?: ItemModel }> {
-    const {
-      description,
-      imageUrl,
-      price,
-      stock,
-      itemID,
-      userID,
-      userType,
-      imagesUrl,
-    } = params;
+    const { description, imageUrl, price, stock, itemID, userID, userType } =
+      params;
 
     return new Promise<{
       statusCode: number;
@@ -218,28 +193,7 @@ export class ItemService {
             price,
             stock,
             item,
-            imagesUrl: imagesUrl.length,
           });
-
-          // this._itemRepo
-          //   .updateItem({ imageUrl, item, name, price, stock })
-          //   .then((updateItem) =>
-          //     resolve({
-          //       statusCode: HttpStatus.OK,
-          //       message: `item with id = ${itemID} updated`,
-          //       item: updateItem,
-          //     }),
-          //   );
-
-          if (
-            imageUrl &&
-            !item.imageUrl.includes(imageUrl) &&
-            item.imageUrl !=
-              this._configService.get<string>('ITEM_DEFAULT_IMAGE')
-          )
-            item.imagesArrayUrl.push(imageUrl);
-          if (imagesUrl.length)
-            item.imagesArrayUrl = [...item.imagesArrayUrl, ...imagesUrl];
 
           Promise.all([
             this._itemRepo.updateItem({
@@ -399,26 +353,18 @@ export class ItemService {
 
   private allChanges(params: {
     imageUrl: string;
-    imagesUrl: number;
     description: string;
     price: number;
     stock: number;
     item: ItemModel;
   }): Promise<QueryResult<HistoricModel>>[] {
-    const { imageUrl, description, price, stock, item, imagesUrl } = params;
+    const { imageUrl, description, price, stock, item } = params;
     const allChanges: Promise<QueryResult<HistoricModel>>[] = [];
     if (imageUrl)
       allChanges.push(
         this._historicRepo.create(item.id, {
           change: 'front image',
           previousValue: item.imageUrl,
-        }),
-      );
-    if (imagesUrl)
-      allChanges.push(
-        this._historicRepo.create(item.id, {
-          change: 'images',
-          previousValue: `add ${imagesUrl} images`,
         }),
       );
     if (description)
