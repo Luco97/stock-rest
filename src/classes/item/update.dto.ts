@@ -25,9 +25,8 @@ export class UpdateItem {
   description: string;
 
   @IsOptional()
-  @IsArray()
-  @IsUrl({}, { each: true })
-  imagesUrl: string[];
+  @IsUrl()
+  imagesUrl: string;
 }
 
 export class UpdateTags {
@@ -35,10 +34,4 @@ export class UpdateTags {
   @IsInt({ each: true })
   @Min(1, { each: true })
   tagIDs: number[];
-}
-
-export class UpdateImages {
-  @IsArray()
-  @IsUrl({}, { each: true })
-  imagesUrl: string[];
 }
