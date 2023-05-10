@@ -12,7 +12,7 @@ CRUD basico, utilizando Fastify, JWT para autenticar usuario y tipo, donde exist
 Algunas de las herramientas utilizadas son:
 
 - Mikro-ORM para manipulacion de la base de datos
-- - Se reintenta re-conexion al realizar uso de repositorios (punto para mikro-orm)
+  - Se reintenta re-conexion al realizar uso de repositorios (punto para mikro-orm)
 - JWT como clave para autenticar usuarios
 - BCrypt para hash de contraseñas de usuarios
 - Fastify
@@ -21,8 +21,12 @@ Algunas de las herramientas utilizadas son:
 Diferencias con la version en GraphQL
 
 - No hay softDelete
-- Query Builder funciona como el culo, Updates y Deletes en Query Builder de Postgresql no crean SQL con joins ni auto-joins son generados (pruebas en repo de Mikro-ORM pasan la prueba pero en MySQL)
+- Query Builder funciona como el culo, Updates y Deletes en Query Builder de Postgresql no crean SQL con joins (ni auto-joins son generados)
+  - pruebas en repo de Mikro-ORM pasan la prueba pero en MySQL (usuarios postgres quedar tipo :c)
 - Uso de entidad virtual en el caso de tag para obtener numero de items por tag
+- multer para recibir imagenes (portada de item se guardan en servicio de cloudinary, se puede usar si se quiere)
+- interceptores para crear id de usuario antes de metodo (la peor excusa para probar interceptores)
+- un pipe para confirmar un valor alfanumerico por ahi (similar a la excusa anterior)
 
 <hr>
 
