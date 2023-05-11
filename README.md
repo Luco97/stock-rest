@@ -6,6 +6,8 @@ CRUD basico, utilizando Fastify, JWT para autenticar usuario y tipo, donde exist
 
 - Administrador, que puede ver productos de cualquier usuario basico y los productos propios del admin (Productos de Administradores solo pueden ser visto por sus creadores)
 - Basicos, usuario que puede borrar, actualizar y revisar sus productos propios.
+- Moderador, para manipular quienes pueden pasar a ser administradores
+- master, simplemente master el mas mamalon
 
 ### Herramientas
 
@@ -24,7 +26,9 @@ Diferencias con la version en GraphQL
 - Query Builder funciona como el culo, Updates y Deletes en Query Builder de Postgresql no crean SQL con joins (ni auto-joins son generados)
   - pruebas en repo de Mikro-ORM pasan la prueba pero en MySQL (usuarios postgres quedar tipo :c)
 - Uso de entidad virtual en el caso de tag para obtener numero de items por tag
+  - este solo punto lo hace mas piñufla que typeORM
 - multer para recibir imagenes (portada de item se guardan en servicio de cloudinary, se puede usar si se quiere)
+  - no hay interceptor para el caso de archivos con fastify
 - interceptores para crear id de usuario antes de metodo (la peor excusa para probar interceptores)
 - un pipe para confirmar un valor alfanumerico por ahi (similar a la excusa anterior)
 
