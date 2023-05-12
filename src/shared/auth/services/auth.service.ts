@@ -74,7 +74,7 @@ export class AuthService {
         };
     } catch (error) {
       return {
-        id: -1,
+        id: 0,
         name: '',
         type: '',
       };
