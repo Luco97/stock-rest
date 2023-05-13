@@ -92,8 +92,8 @@ export class ItemController {
   }
 
   @Get(':itemID')
-  @SetMetadata('roles', ['basic', 'admin', 'master', 'mod'])
-  @UseGuards(RoleGuard)
+  // @SetMetadata('roles', ['basic', 'admin', 'master', 'mod'])
+  // @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   findOne(
     @Headers('user_id') userID: string,
@@ -102,7 +102,7 @@ export class ItemController {
     @Res() res: FastifyReply,
   ) {
     this._itemService
-      .findOne({ itemID, rol: userType, userID: +userID })
+      .findOne({ itemID, rol: 'admin', userID: +userID })
       .then((item) => {
         res.send({
           item,
