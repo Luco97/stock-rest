@@ -77,18 +77,18 @@ export class ItemController {
         take: +take,
         orderBy,
         userID: +userID,
-        userType: 'admin',
+        userType: 'mod',
         inTagsID: tagsID,
         ninTagsID: excludeTagsID,
       })
-      .then(([items, count]) =>
+      .then(([items, count]) => {
         res.status(HttpStatus.OK).send({
           items,
           count,
           statusCode: HttpStatus.OK,
           message: 'All items',
-        }),
-      );
+        });
+      });
   }
 
   @Get(':itemID')
@@ -102,7 +102,7 @@ export class ItemController {
     @Res() res: FastifyReply,
   ) {
     this._itemService
-      .findOne({ itemID, rol: 'admin', userID: +userID })
+      .findOne({ itemID, rol: 'mod', userID: +userID })
       .then((item) => {
         res.send({
           item,
