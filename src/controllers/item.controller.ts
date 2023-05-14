@@ -77,7 +77,7 @@ export class ItemController {
         take: +take,
         orderBy,
         userID: +userID,
-        userType,
+        userType: 'admin',
         inTagsID: tagsID,
         ninTagsID: excludeTagsID,
       })
@@ -92,8 +92,8 @@ export class ItemController {
   }
 
   @Get(':itemID')
-  // @SetMetadata('roles', ['basic', 'admin', 'master', 'mod'])
-  // @UseGuards(RoleGuard)
+  @SetMetadata('roles', ['basic', 'admin', 'master', 'mod'])
+  @UseGuards(RoleGuard)
   @UseInterceptors(GetTokenInterceptor)
   findOne(
     @Headers('user_id') userID: string,
