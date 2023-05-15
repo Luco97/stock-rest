@@ -83,7 +83,10 @@ export class ItemController {
       })
       .then(([items, count]) => {
         res.status(HttpStatus.OK).send({
-          items,
+          items: items.map<any>((item) => ({
+            ...item,
+            isCreator: +userID == item.user.id,
+          })),
           count,
           statusCode: HttpStatus.OK,
           message: 'All items',
@@ -105,7 +108,10 @@ export class ItemController {
       .findOne({ itemID, rol: 'mod', userID: +userID })
       .then((item) => {
         res.send({
-          item,
+          item: {
+            ...item,
+            isCreator: +userID == item.user.id,
+          },
           statusCode: HttpStatus.OK,
           message: 'All items',
         });
