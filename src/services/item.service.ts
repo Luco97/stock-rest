@@ -342,7 +342,10 @@ export class ItemService {
               resolve({
                 statusCode: HttpStatus.OK,
                 message: `items related to "${item.name}"`,
-                items,
+                items: items.map<any>((item) => ({
+                  ...item,
+                  isCreator: userID == item.user.id,
+                })),
                 count,
               }),
             );
