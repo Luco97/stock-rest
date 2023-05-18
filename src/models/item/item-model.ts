@@ -30,10 +30,13 @@ export class ItemModel {
   price: number;
 
   @Property({ nullable: true })
-  description: string;
+  description?: string;
+
+  @Property({ nullable: true, type: 'varchar', length: 7 })
+  colorTheme?: string;
 
   @Property({ nullable: true })
-  imageUrl: string;
+  imageUrl?: string;
 
   @Property()
   assetsFolder: string;
