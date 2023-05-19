@@ -1,4 +1,4 @@
-import { IsDefined, IsOptional, Min, MinLength } from 'class-validator';
+import { IsDefined, IsOptional, Max, Min, MinLength } from 'class-validator';
 
 export class CreateItem {
   @IsDefined()
@@ -11,6 +11,7 @@ export class CreateItem {
 
   @IsDefined()
   @Min(0)
+  @Max(9999)
   price: number;
 
   @IsOptional()

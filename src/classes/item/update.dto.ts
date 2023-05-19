@@ -3,6 +3,7 @@ import {
   IsInt,
   IsOptional,
   IsUrl,
+  Max,
   Min,
   MinLength,
 } from 'class-validator';
@@ -10,6 +11,7 @@ import {
 export class UpdateItem {
   @IsOptional()
   @Min(0)
+  @Max(9999)
   price: number;
 
   @IsOptional()
