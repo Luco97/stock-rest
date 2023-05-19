@@ -49,6 +49,8 @@ export class ItemController {
     @Query('skip') skip: string,
     @Query('order') order: string,
     @Query('orderBy') orderBy: string,
+    @Query('min_price') min: string,
+    @Query('max_price') max: string,
     @Query(
       'search',
       new ParseArrayPipe({ items: String, optional: true, separator: ',' }),
@@ -80,6 +82,8 @@ export class ItemController {
         userType: 'mod',
         inTagsID: tagsID,
         ninTagsID: excludeTagsID,
+        priceMax: +max || 9999,
+        priceMin: +min || 0,
       })
       .then(([items, count]) => {
         res.status(HttpStatus.OK).send({
