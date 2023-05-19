@@ -27,6 +27,8 @@ export class ItemService {
     userID: number;
     userType: string;
     search?: string[];
+    priceMin?: number;
+    priceMax?: number;
     inTagsID?: number[];
     ninTagsID?: number[];
   }): Promise<[ItemModel[], number]> {
@@ -40,6 +42,8 @@ export class ItemService {
       search,
       inTagsID,
       ninTagsID,
+      priceMax,
+      priceMin,
     } = params;
 
     return this._itemRepo.findAll({

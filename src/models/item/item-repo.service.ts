@@ -39,8 +39,10 @@ export class ItemRepoService {
     orderBy: string;
     order: 'ASC' | 'DESC';
     rol: string;
-    userID: number;
     search?: string[];
+    userID: number;
+    priceMax?: number;
+    priceMin?: number;
     inTagsID?: number[];
     ninTagsID?: number[];
   }): Promise<[ItemModel[], number]> {
@@ -52,6 +54,8 @@ export class ItemRepoService {
       rol,
       userID,
       search,
+      priceMax,
+      priceMin,
       inTagsID,
       ninTagsID,
     } = params;
@@ -79,6 +83,7 @@ export class ItemRepoService {
         'item.imageUrl',
         'item.createdAt',
         'item.updatedAt',
+        'item.colorTheme',
       ])
       .leftJoinAndSelect('item.user', 'user')
       .leftJoinAndSelect('item.tags', 'tags')
@@ -108,6 +113,12 @@ export class ItemRepoService {
           },
           {
             $or: logicOr,
+          },
+          {
+            price: {
+              $lte: priceMax || 9999,
+              $gte: priceMin || 0,
+            },
           },
         ],
       })
