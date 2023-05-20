@@ -24,24 +24,20 @@ export class ItemService {
     skip: number;
     order: string;
     orderBy: string;
-    userID: number;
-    userType: string;
     search?: string[];
+    usersID?: number[];
     priceMin?: number;
     priceMax?: number;
     inTagsID?: number[];
-    ninTagsID?: number[];
   }): Promise<[ItemModel[], number]> {
     const {
       order,
       orderBy,
       skip,
       take,
-      userID,
-      userType,
+      usersID,
       search,
       inTagsID,
-      ninTagsID,
       priceMax,
       priceMin,
     } = params;
@@ -57,11 +53,11 @@ export class ItemService {
       )
         ? `item.${orderBy}`
         : 'item.createdAt',
-      rol: userType,
-      userID: userID,
       search: search || [],
       inTagsID: inTagsID || [],
-      ninTagsID: ninTagsID || [],
+      usersID,
+      priceMax,
+      priceMin,
     });
   }
 

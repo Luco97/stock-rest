@@ -52,6 +52,11 @@ export class ItemController {
     @Query('min_price') min: string,
     @Query('max_price') max: string,
     @Query(
+      'users_id',
+      new ParseArrayPipe({ items: Number, optional: true, separator: ',' }),
+    )
+    usersID: number[],
+    @Query(
       'search',
       new ParseArrayPipe({ items: String, optional: true, separator: ',' }),
     )
@@ -61,11 +66,6 @@ export class ItemController {
       new ParseArrayPipe({ items: Number, optional: true, separator: ',' }),
     )
     tagsID: number[],
-    @Query(
-      'excludeTagsID',
-      new ParseArrayPipe({ items: Number, optional: true, separator: ',' }),
-    )
-    excludeTagsID: number[],
     @Res() res: FastifyReply,
   ) {
     this._itemService
@@ -78,10 +78,8 @@ export class ItemController {
         skip: +skip,
         take: +take,
         orderBy,
-        userID: +userID,
-        userType: 'mod',
+        usersID: usersID || [],
         inTagsID: tagsID,
-        ninTagsID: excludeTagsID,
         priceMax: +max || 9999,
         priceMin: +min || 0,
       })

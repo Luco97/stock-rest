@@ -38,26 +38,22 @@ export class ItemRepoService {
     take: number;
     orderBy: string;
     order: 'ASC' | 'DESC';
-    rol: string;
     search?: string[];
-    userID: number;
     priceMax?: number;
     priceMin?: number;
     inTagsID?: number[];
-    ninTagsID?: number[];
+    usersID?: number[];
   }): Promise<[ItemModel[], number]> {
     const {
       order,
       orderBy,
       skip,
       take,
-      rol,
-      userID,
       search,
       priceMax,
       priceMin,
       inTagsID,
-      ninTagsID,
+      usersID,
     } = params;
 
     let logicOr = [];
@@ -69,9 +65,16 @@ export class ItemRepoService {
         ['lower("item"."name")']: { $ilike: `%${element}%` },
       })) || [];
 
-    if (inTagsID?.length) logicOr.push({ 'tags.id': { $in: inTagsID } });
-    if (ninTagsID?.length) logicOr.push({ 'tags.id': { $nin: ninTagsID } });
     logicOr.push(...itemName);
+    let logicAnd = [];
+    if (inTagsID?.length)
+      logicAnd.push({
+        'tags.id': { $in: inTagsID },
+      });
+    if (usersID?.length)
+      logicAnd.push({
+        'user.id': { $in: usersID },
+      });
 
     return this._itemRepo
       .createQueryBuilder('item')
@@ -89,31 +92,8 @@ export class ItemRepoService {
       .leftJoinAndSelect('item.tags', 'tags')
       .where({
         $and: [
-          {
-            $or: [
-              { 'user.id': userID },
-              {
-                $and: [
-                  {
-                    "lower('admin')": rol,
-                  },
-                  { 'user.type': { $nin: ['master', 'mod', 'admin'] } },
-                ],
-              },
-              {
-                $and: [
-                  {
-                    "lower('mod')": rol,
-                  },
-                  { 'user.type': { $nin: ['master', 'mod'] } },
-                ],
-              },
-              { "lower('master')": rol },
-            ],
-          },
-          {
-            $or: logicOr,
-          },
+          ...logicAnd,
+          ...itemName,
           {
             price: {
               $lte: priceMax || 9999,
