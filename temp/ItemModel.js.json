@@ -100,6 +100,7 @@
         "name": "changes",
         "reference": "1:m",
         "cascade": ["remove"],
+        "lazy": true,
         "type": "HistoricModel",
         "array": false
       },
@@ -213,6 +214,7 @@
         "name": "changes",
         "reference": "1:m",
         "cascade": ["remove"],
+        "lazy": true,
         "type": "HistoricModel",
         "array": false
       },
@@ -255,6 +257,7 @@
         "name": "changes",
         "reference": "1:m",
         "cascade": ["remove"],
+        "lazy": true,
         "type": "HistoricModel",
         "array": false
       },
@@ -272,6 +275,6 @@
     "collection": "item_model"
   },
   "origin": "./dist/models/item/item-model.js",
-  "hash": "aa104828247ebacb45fc4339dce99571",
+  "hash": "86f1c02ed3fd2331a36008d826785308",
   "version": "5.6.9"
 }

@@ -52,6 +52,7 @@ export class ItemModel {
 
   @OneToMany(() => HistoricModel, (historic) => historic.item, {
     cascade: [Cascade.REMOVE],
+    lazy: true,
   })
   changes: Collection<HistoricModel> = new Collection<HistoricModel>(this);
 
