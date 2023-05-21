@@ -382,6 +382,13 @@ export class ItemService {
           previousValue: item.imageUrl,
         }),
       );
+    if (colorTheme)
+      allChanges.push(
+        this._historicRepo.create(item.id, {
+          change: 'item color theme',
+          previousValue: item?.colorTheme ?? 'no color',
+        }),
+      );
     if (description)
       allChanges.push(
         this._historicRepo.create(item.id, {
