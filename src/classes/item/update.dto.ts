@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsHexColor,
   IsInt,
   IsOptional,
   IsUrl,
@@ -27,8 +28,8 @@ export class UpdateItem {
   description: string;
 
   @IsOptional()
-  @IsUrl()
-  imagesUrl: string;
+  @IsHexColor()
+  colorTheme: string;
 }
 
 export class UpdateTags {
