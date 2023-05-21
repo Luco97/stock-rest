@@ -164,16 +164,25 @@ export class ItemService {
   }
 
   update(params: {
-    imageUrl: string;
-    price: number;
-    stock: number;
+    imageUrl?: string;
+    price?: number;
+    stock?: number;
     userID: number;
     userType: string;
     itemID: number;
-    description: string;
+    description?: string;
+    colorTheme?: string;
   }): Promise<{ statusCode: number; message: string; item?: ItemModel }> {
-    const { description, imageUrl, price, stock, itemID, userID, userType } =
-      params;
+    const {
+      description,
+      imageUrl,
+      price,
+      stock,
+      itemID,
+      userID,
+      userType,
+      colorTheme,
+    } = params;
 
     return new Promise<{
       statusCode: number;
@@ -193,6 +202,7 @@ export class ItemService {
             price,
             stock,
             item,
+            colorTheme,
           });
 
           Promise.all([
@@ -202,6 +212,7 @@ export class ItemService {
               description,
               price,
               stock,
+              colorTheme,
             }),
             ...allChanges,
           ]).then(([updateItem]) =>
@@ -359,9 +370,10 @@ export class ItemService {
     description: string;
     price: number;
     stock: number;
+    colorTheme: string;
     item: ItemModel;
   }): Promise<QueryResult<HistoricModel>>[] {
-    const { imageUrl, description, price, stock, item } = params;
+    const { imageUrl, description, price, stock, item, colorTheme } = params;
     const allChanges: Promise<QueryResult<HistoricModel>>[] = [];
     if (imageUrl)
       allChanges.push(

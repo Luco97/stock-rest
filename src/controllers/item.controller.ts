@@ -186,7 +186,7 @@ export class ItemController {
     @Body() cuerpo: UpdateItem,
     @Res() res: FastifyReply,
   ) {
-    const { imageUrl, description, price, stock } = cuerpo;
+    const { imageUrl, description, price, stock, colorTheme } = cuerpo;
     this._itemService
       .update({
         imageUrl,
@@ -196,6 +196,7 @@ export class ItemController {
         stock,
         userID: +userID,
         userType,
+        colorTheme,
       })
       .then((response) => res.status(response.statusCode).send(response));
   }

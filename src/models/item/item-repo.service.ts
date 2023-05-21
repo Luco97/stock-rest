@@ -164,13 +164,15 @@ export class ItemRepoService {
     stock: number;
     price: number;
     imageUrl: string;
+    colorTheme: string;
   }): Promise<ItemModel> {
-    const { imageUrl, description, price, stock, item } = params;
+    const { imageUrl, description, price, stock, item, colorTheme } = params;
 
     if (price) item['price'] = price;
     if (stock) item['stock'] = stock;
     if (description) item['description'] = description;
     if (imageUrl) item['imageUrl'] = imageUrl;
+    if (colorTheme) item['colorTheme'] = colorTheme;
 
     return new Promise<ItemModel>((resolve, reject) =>
       this._itemRepo.persistAndFlush(item).then(() => {
