@@ -76,35 +76,38 @@ export class ItemRepoService {
         'user.id': { $in: usersID },
       });
 
-    return this._itemRepo
-      .createQueryBuilder('item')
-      .select([
-        'item.id',
-        'item.name',
-        'item.price',
-        'item.stock',
-        'item.imageUrl',
-        'item.createdAt',
-        'item.updatedAt',
-        'item.colorTheme',
-      ])
-      .leftJoinAndSelect('item.user', 'user')
-      .leftJoinAndSelect('item.tags', 'tags')
-      .where({
-        $and: [
-          ...logicAnd,
-          ...itemName,
-          {
-            price: {
-              $lte: priceMax || 9999,
-              $gte: priceMin || 0,
+    return (
+      this._itemRepo
+        .createQueryBuilder('item')
+        .select([
+          'item.id',
+          'item.name',
+          'item.price',
+          'item.stock',
+          'item.imageUrl',
+          'item.createdAt',
+          'item.updatedAt',
+          'item.colorTheme',
+        ])
+        .leftJoinAndSelect('item.user', 'user')
+        .leftJoinAndSelect('item.tags', 'tags')
+        .where({
+          $and: [
+            ...logicAnd,
+            ...itemName,
+            {
+              price: {
+                $lte: priceMax || 9999,
+                $gte: priceMin || 0,
+              },
             },
-          },
-        ],
-      })
-      .limit(take, take * skip)
-      .orderBy({ [orderBy]: order })
-      .getResultAndCount();
+          ],
+        })
+        // .having(`COUNT(distinc "tags"."id") = ${inTagsID.length}`) <--- Error :( para encontrar con esos tags y mas
+        .limit(take, take * skip)
+        .orderBy({ [orderBy]: order })
+        .getResultAndCount()
+    );
   }
 
   findOne(params: {
