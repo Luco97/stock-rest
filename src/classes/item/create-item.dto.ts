@@ -1,4 +1,11 @@
-import { IsDefined, IsOptional, Max, Min, MinLength } from 'class-validator';
+import {
+  IsDefined,
+  IsHexColor,
+  IsOptional,
+  Max,
+  Min,
+  MinLength,
+} from 'class-validator';
 
 export class CreateItem {
   @IsDefined()
@@ -17,4 +24,8 @@ export class CreateItem {
   @IsOptional()
   @MinLength(5)
   description: string;
+
+  @IsOptional()
+  @IsHexColor()
+  colorTheme: string;
 }
