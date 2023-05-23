@@ -83,12 +83,14 @@ export class ItemService {
     stock: number;
     userID: number;
     description: string;
+    colorTheme: string;
   }): Promise<{
     statusCode: number;
     message: string;
     item: RequiredEntityData<ItemModel>;
   }> {
-    const { file, name, price, description, stock, userID } = params;
+    const { file, name, price, description, stock, userID, colorTheme } =
+      params;
 
     return new Promise<{
       statusCode: number;
@@ -105,6 +107,7 @@ export class ItemService {
             price,
             stock,
             userID,
+            colorTheme,
             description,
           })
           .then((result) =>
@@ -142,8 +145,9 @@ export class ItemService {
                 name,
                 price,
                 stock,
-                description,
                 userID,
+                colorTheme,
+                description,
               })
               .then((result) =>
                 resolve({

@@ -16,16 +16,19 @@ export class ItemRepoService {
     name: string;
     stock: number;
     price: number;
+    userID: number;
     imageUrl: string;
     description: string;
-    userID: number;
+    colorTheme: string;
   }) {
-    const { imageUrl, name, price, description, stock, userID } = params;
+    const { imageUrl, name, price, description, stock, userID, colorTheme } =
+      params;
     const newItem = this._itemRepo.create({
       imageUrl,
       name: name.replace(/[^A-Za-z0-9|ñ]+/g, '-'),
       price,
       stock,
+      colorTheme,
       description,
       user: { id: userID },
     });

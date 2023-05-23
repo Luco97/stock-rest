@@ -153,7 +153,7 @@ export class ItemController {
     createBody: CreateItem,
     @Res() res: FastifyReply,
   ) {
-    const { name, price, description, stock } = createBody;
+    const { name, price, description, stock, colorTheme } = createBody;
 
     this._itemService.findOneByName(name).then((count) => {
       if (count)
@@ -169,6 +169,7 @@ export class ItemController {
             price,
             stock,
             userID: +userID,
+            colorTheme,
             description,
           })
           .then((response) => res.status(response.statusCode).send(response));
