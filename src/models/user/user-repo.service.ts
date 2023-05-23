@@ -3,8 +3,8 @@ import { QueryOrder } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
-import { UserItemsCount, UserModel } from './user-model';
 import { UserTypes, hashPass } from './user-const';
+import { UserItemsCount, UserModel } from './user-model';
 
 @Injectable()
 export class UserRepoService {
@@ -76,7 +76,7 @@ export class UserRepoService {
   // findAll para todos los usuarios, solo master no es considerado
   // master puede dar rol de mod y admin
   // mod puede dar rol de admin
-  // admin es admin pero puede ver todo
+  // admin es admin pero puede cambiar (propios o basicos)
   // basicos = SIGMA
   findAll(params: {
     take: number;
