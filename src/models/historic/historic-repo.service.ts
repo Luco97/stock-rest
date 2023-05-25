@@ -40,12 +40,15 @@ export class HistoricRepoService {
   create(
     itemID: number,
     params: { change: string; previousValue: string },
-  ): Promise<QueryResult<HistoricModel>> {
+  ): Promise<void> {
     const { change, previousValue } = params;
 
-    return this._historyRepo
-      .createQueryBuilder()
-      .insert({ item: { id: itemID }, change, previousValue })
-      .execute('run');
+    return this._historyRepo.persistAndFlush(
+      this._historyRepo.create({
+        item: { id: itemID },
+        change,
+        previousValue,
+      }),
+    );
   }
 }

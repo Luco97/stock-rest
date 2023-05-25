@@ -267,9 +267,9 @@ export class ItemService {
     itemID: number;
     userID: number;
     userType: string;
-    tagIDs: number[];
+    tagsID: number[];
   }) {
-    const { tagIDs, itemID, userID, userType } = params;
+    const { tagsID, itemID, userID, userType } = params;
 
     return new Promise<{
       statusCode: number;
@@ -278,7 +278,7 @@ export class ItemService {
     }>((resolve, reject) =>
       Promise.all([
         this._itemRepo.findOne({ itemID, rol: userType, userID }),
-        this._tagRepo.findAllByID(tagIDs),
+        this._tagRepo.findAllByID(tagsID),
       ]).then(([item, tags]) => {
         if (!item)
           resolve({
@@ -376,9 +376,9 @@ export class ItemService {
     stock: number;
     colorTheme: string;
     item: ItemModel;
-  }): Promise<QueryResult<HistoricModel>>[] {
+  }): Promise<void>[] {
     const { imageUrl, description, price, stock, item, colorTheme } = params;
-    const allChanges: Promise<QueryResult<HistoricModel>>[] = [];
+    const allChanges: Promise<void>[] = [];
     if (imageUrl)
       allChanges.push(
         this._historicRepo.create(item.id, {
