@@ -36,5 +36,5 @@ export class UpdateTags {
   @IsArray()
   @IsInt({ each: true })
   @Min(1, { each: true })
-  tagIDs: number[];
+  tagsID: number[];
 }

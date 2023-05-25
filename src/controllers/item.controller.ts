@@ -261,12 +261,12 @@ export class ItemController {
     @Body() cuerpo: UpdateTags,
     @Res() res: FastifyReply,
   ) {
-    const { tagIDs } = cuerpo;
+    const { tagsID } = cuerpo;
 
     this._itemService
       .updateItemTags({
-        itemID,
-        tagIDs,
+        itemID: itemID,
+        tagsID: tagsID,
         userID: +userID,
         userType,
       })
