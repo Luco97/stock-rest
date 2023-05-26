@@ -41,7 +41,7 @@ export class ItemModel {
   @Property()
   assetsFolder: string;
 
-  @Property()
+  @Property({ onCreate: () => new Date() })
   createdAt: Date = new Date();
 
   @Property({ onUpdate: () => new Date() })
