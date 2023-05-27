@@ -284,6 +284,7 @@ export class ItemController {
     @Query('take') take: string,
     @Query('skip') skip: string,
     @Query('order') order: string,
+    @Query('customUserID') customUserID: string,
     @Query(
       'tagsID',
       new ParseArrayPipe({ items: Number, optional: true, separator: ',' }),
@@ -297,7 +298,7 @@ export class ItemController {
         order,
         skip: +skip || 0,
         take: +take || 10,
-        userID: +userID,
+        userID: +customUserID ?? +userID,
         userType,
       })
       .then((response) => res.status(response.statusCode).send(response));
