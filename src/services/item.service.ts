@@ -116,11 +116,15 @@ export class ItemService {
               message: 'item created',
               item: {
                 id: result.insertId,
-                name,
+                name: name.replace(/[^A-Za-z0-9|ñ]+/g, '-'),
                 imageUrl: defaultImage,
                 price,
                 stock,
                 description,
+                colorTheme,
+                assetsFolder: `product_${name
+                  .replace(/[^A-Za-z0-9|ñ]+/g, '-')
+                  .toLowerCase()}`,
               },
             }),
           );
@@ -149,19 +153,24 @@ export class ItemService {
                 colorTheme,
                 description,
               })
-              .then((result) =>
+              .then((result) => {
                 resolve({
                   statusCode: HttpStatus.OK,
                   message: 'item created',
                   item: {
                     id: result.insertId,
-                    name,
+                    name: name.replace(/[^A-Za-z0-9|ñ]+/g, '-'),
                     price,
                     stock,
+                    description,
+                    colorTheme,
+                    assetsFolder: `product_${name
+                      .replace(/[^A-Za-z0-9|ñ]+/g, '-')
+                      .toLowerCase()}`,
                     imageUrl: cloudinaryResponse.url,
                   },
-                }),
-              );
+                });
+              });
           });
       }
     });
