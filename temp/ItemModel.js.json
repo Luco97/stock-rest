@@ -48,7 +48,7 @@
         "reference": "scalar",
         "nullable": true,
         "type": "varchar",
-        "length": 7,
+        "length": 10,
         "getter": false,
         "setter": false,
         "array": false,
@@ -162,7 +162,7 @@
         "reference": "scalar",
         "nullable": true,
         "type": "varchar",
-        "length": 7,
+        "length": 10,
         "getter": false,
         "setter": false,
         "array": false,
@@ -275,6 +275,6 @@
     "collection": "item_model"
   },
   "origin": "./dist/models/item/item-model.js",
-  "hash": "c09144300e5a090f1a363a4fb079a378",
+  "hash": "f30cef2abe030c92eab18c18807610bc",
   "version": "5.6.9"
 }

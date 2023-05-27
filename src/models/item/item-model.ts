@@ -32,7 +32,7 @@ export class ItemModel {
   @Property({ nullable: true })
   description?: string;
 
-  @Property({ nullable: true, type: 'varchar', length: 7 })
+  @Property({ nullable: true, type: 'varchar', length: 10 })
   colorTheme?: string;
 
   @Property({ nullable: true })
