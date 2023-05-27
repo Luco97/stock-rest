@@ -264,7 +264,13 @@ export class ItemRepoService {
       .leftJoinAndSelect('item.user', 'user')
       .leftJoinAndSelect('item.tags', 'tags')
       .where({
-        $and: [{ 'tags.id': { $in: tagsID } }, { 'user.id': { $not: userID } }],
+        $and: [
+          { 'tags.id': { $in: tagsID } },
+          {
+            // En caso de evitar algun usuario
+            'user.id': { $not: userID },
+          },
+        ],
       })
       .limit(take, take * skip)
       .orderBy({ [orderBy]: order })
