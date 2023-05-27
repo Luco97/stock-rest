@@ -31,8 +31,12 @@ export class ItemRepoService {
       colorTheme,
       description,
       user: { id: userID },
+      assetsFolder: `product_${name
+        .replace(/[^A-Za-z0-9|ñ]+/g, '-')
+        .toLowerCase()}`,
     });
 
+    // return this._itemRepo.persistAndFlush(newItem);
     return this._itemRepo.createQueryBuilder().insert(newItem).execute('run');
   }
 
