@@ -37,6 +37,17 @@ export class TagRepoService {
       .getResult();
   }
 
+  countByName(name: string): Promise<TagModel> {
+    return this._tagRepo
+      .createQueryBuilder('tag')
+      .where({
+        'lower("tag"."name")': name
+          .replace(/[^A-Za-z0-9|ñ]+/g, '-')
+          .toLowerCase(),
+      })
+      .getSingleResult();
+  }
+
   // findOne(id: number): Promise<TagModel> {
   //   return this._tagRepo.findOne({ id });
   // }
