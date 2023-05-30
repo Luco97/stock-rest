@@ -20,10 +20,35 @@ export class TagService {
     });
   }
 
-  create(params: { name: string; description: string }): Promise<TagModel> {
+  create(params: { name: string; description: string }): Promise<{
+    statusCode: number;
+    message: string;
+    tag: TagModel;
+  }> {
     const { description, name } = params;
 
-    return this._tagRepo.create({ name, description });
+    return new Promise<{
+      statusCode: number;
+      message: string;
+      tag: TagModel;
+    }>((resolve, reject) => {
+      this._tagRepo.countByName(name).then((tag) => {
+        if (tag)
+          resolve({
+            statusCode: HttpStatus.CONFLICT,
+            message: 'tag already exist',
+            tag: tag,
+          });
+        else
+          this._tagRepo.create({ name, description }).then((newTag) =>
+            resolve({
+              statusCode: HttpStatus.OK,
+              message: 'tag created',
+              tag: newTag,
+            }),
+          );
+      });
+    });
   }
 
   update(
