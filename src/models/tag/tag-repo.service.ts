@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { QueryOrderNumeric } from '@mikro-orm/core';
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { EntityRepository } from '@mikro-orm/postgresql';
 
@@ -17,17 +18,23 @@ export class TagRepoService {
     take: number;
     skip: number;
     name: string;
-  }): Promise<[TagItemsCount[], number]> {
+  }): Promise<[TagModel[] | TagItemsCount[], number]> {
     const { name, skip, take } = params;
-
-    return this._tagItemRepo.findAndCount(
-      { name: { $ilike: `%${name}%` } },
-      {
-        limit: take,
-        offset: take * skip,
-        // orderBy: { name: QueryOrderNumeric.ASC },
-      },
-    );
+    if (!name)
+      return this._tagItemRepo.findAndCount(
+        {},
+        {
+          limit: take,
+          offset: take * skip,
+          // orderBy: { name: QueryOrderNumeric.ASC },
+        },
+      );
+    return this._tagRepo
+      .createQueryBuilder('tag')
+      .where({ 'lower("tag"."name")': { $ilike: `${name}%` } })
+      .limit(take, take * skip)
+      .orderBy({ name: QueryOrderNumeric.ASC })
+      .getResultAndCount();
   }
 
   findAllByID(tagID: number[]) {

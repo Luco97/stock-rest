@@ -10,7 +10,7 @@ export class TagService {
     take: number;
     skip: number;
     term: string;
-  }): Promise<[TagItemsCount[], number]> {
+  }): Promise<[TagItemsCount[] | TagModel[], number]> {
     const { skip, take, term } = params;
 
     return this._tagRepo.findAll({
