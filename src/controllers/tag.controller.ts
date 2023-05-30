@@ -45,13 +45,9 @@ export class TagController {
   create(@Body() createTag: CreateTag, @Res() res: FastifyReply) {
     const { description, name } = createTag;
 
-    this._tagService.create({ name, description }).then((newTag) =>
-      res.status(HttpStatus.OK).send({
-        statusCode: HttpStatus.OK,
-        message: 'tag created',
-        tag: newTag,
-      }),
-    );
+    this._tagService
+      .create({ name, description })
+      .then((response) => res.status(HttpStatus.OK).send(response));
   }
 
   @Put(':tagID/update')
