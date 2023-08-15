@@ -28,9 +28,9 @@ Diferencias con la version en GraphQL
 - Uso de entidad virtual en el caso de tag para obtener numero de items por tag
   - este solo punto lo hace mas piñufla que typeORM
 - multer para recibir imagenes (portada de item se guardan en servicio de cloudinary, se puede usar si se quiere)
-  - no hay interceptor para el caso de archivos con fastify
+  - no hay interceptor para el caso de archivos con fastify (debe ser creado por uno)
 - interceptores para crear id de usuario antes de metodo (la peor excusa para probar interceptores)
-- un pipe para confirmar un valor alfanumerico por ahi (similar a la excusa anterior)
+- un pipe para confirmar un valor alfanumerico por ahi (similar a la excusa anterior pero con un pipe)
 
 <hr>
 
