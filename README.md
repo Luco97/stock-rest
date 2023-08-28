@@ -4,8 +4,8 @@
 
 CRUD basico, utilizando Fastify, JWT para autenticar usuario y tipo, donde existen solo 2 roles:
 
-- Administrador, que puede ver productos de cualquier usuario basico y los productos propios del admin (Productos de Administradores solo pueden ser visto por sus creadores)
 - Basicos, usuario que puede borrar, actualizar y revisar sus productos propios.
+- Administrador, que puede ver productos de cualquier usuario basico y los productos propios del admin (Productos de Administradores solo pueden ser visto por sus creadores)
 - Moderador, para manipular quienes pueden pasar a ser administradores
 - master, simplemente master el mas mamalon
 
