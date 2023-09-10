@@ -17,4 +17,7 @@ export default defineConfig({
   registerRequestContext: false,
   extensions: [Migrator, EntityGenerator, SeedManager],
   allowGlobalContext: true,
+  driverOptions: {
+    connection: { ssl: process.env?.NODE_ENV == 'production' },
+  },
 });
