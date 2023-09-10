@@ -1,7 +1,6 @@
 # compiled output
 /dist
 /node_modules
-/src/migrations
 
 # Logs
 logs
@@ -37,5 +36,7 @@ lerna-debug.log*
 
 # Things
 .env
+env-local.txt
+env-prod.txt
 /upload
 package-lock.json
